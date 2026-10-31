@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cakekue | Custom Cake Designs Inquiry Form</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="portal-container">
+      <div class="header-section">
+        <h1 class="brand-title">cakekue</h1>
+        <div class="brand-subtitle">🎂 custom designs - Vancouver BC</div>
+      </div>
+
+      <form id="orderForm" enctype="multipart/form-data">
+        <div class="form-section-title">1. Contact Information</div>
+
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input
+            type="text"
+            name="customer_name"
+            placeholder="e.g. Jane Doe"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Contact Info (Phone or Email) *</label>
+          <input
+            type="text"
+            name="customer_contact"
+            placeholder="e.g. 604-123-4567 or email@domain.com"
+            required
+          />
+        </div>
+
+        <div class="form-section-title">2. Pickup Details</div>
+
+        <div class="form-group">
+            <label>Pickup Date *</label>
+            <input type="date" id="pickup_date" name="pickup_date" required>
+            <div class="notice">Available everyday. Special hours apply on Mondays and Tuesdays.</div>
+        </div>
+
+        <div class="form-group">
+            <label>Pickup Time *</label>
+            <select id="pickup_time" name="pickup_time" required disabled>
+                <option value="">Please select a valid pickup date first</option>
+            </select>
+        </div>
+
+        <div class="form-section-title">3. Cake Specifications</div>
+
+        <div class="form-group">
+          <label>Cake Size *</label>
+          <select name="cake_size" required>
+            <option value="" disabled selected>Please select a size</option>
+            <option value='Bento (4")'>Bento (4”) serves 1-2</option>
+            <option value='Standard (6")'>Standard (6”) serves 6-8</option>
+            <option value='Large (8")'>Large (8”) serves 10-12</option>
+            <option value='Big Celebration (4" + 6")'>
+              Big Celebration (4” + 6”) serves 10-12
+            </option>
+            <option value='Big Celebration (6" + 8")'>
+              Big Celebration (6” + 8”) serves 24-26
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Cake Flavour *</label>
+          <select name="cake_flavour" required>
+            <option value="" disabled selected>Please select a flavour</option>
+            <option value="Classic Vanilla">Classic Vanilla</option>
+            <option value="Chocolate Hazelnut">Chocolate Hazelnut</option>
+            <option value="Strawberry Shortcake">Strawberry Shortcake</option>
+            <option value="Red Velvet">Red Velvet</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Candle Add-on</label>
+          <select name="candle_option">
+            <option value="None">None</option>
+            <option value="Standard (+$1)">Standard (+$1)</option>
+            <option value="Premium (+$3)">Premium (+$3)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Dietary Restrictions / Allergies</label>
+          <input
+            type="text"
+            name="diet_notes"
+            placeholder="e.g. Nut allergy, gluten free..."
+          />
+        </div>
+
+        <div class="form-section-title">4. Design & Inspiration</div>
+
+        <div class="form-group">
+          <label>Special Message / Design Description</label>
+          <textarea
+            name="design_message_notes"
+            placeholder="Describe writing on cake, color theme, design details..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Inspiration Pictures (Optional)</label>
+          <div class="file-input-wrapper">
+            <input type="file" name="inspo_photos" multiple accept="image/*" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Preferred Payment Method</label>
+          <select name="payment_method">
+            <option value="" disabled selected>Please select a payment method</option>
+            <option value="E-Transfer">E-Transfer</option>
+            <option value="Cash">Cash</option>
+          </select>
+        </div>
+
+        <div class="deposit-warning">
+          *50% NONREFUNDABLE DOWNPAYMENT IS REQUIRED TO SECURE YOUR ORDER 🙂
+        </div>
+
+        <button type="submit">Submit Inquiry</button>
+      </form>
+    </div>
+
+    <script>
+        const dateInput = document.getElementById('pickup_date');
+        const timeSelect = document.getElementById('pickup_time');
+
+        // Define schedules per pickup day
+        const timeSchedules = {
+            // Wednesday through Sunday schedule (After 4:30 PM)
+            standard: [
+                { value: "16:30", text: "4:30 PM" },
+                { value: "17:00", text: "5:00 PM" },
+                { value: "17:30", text: "5:30 PM" },
+                { value: "18:00", text: "6:00 PM" },
+                { value: "18:30", text: "6:30 PM" },
+                { value: "19:00", text: "7:00 PM" },
+                { value: "19:30", text: "7:30 PM" },
+                { value: "20:00", text: "8:00 PM" },
+                { value: "20:30", text: "8:30 PM" },
+                { value: "21:00", text: "9:00 PM" }
+            ],
+            // Special schedule for Mondays (1) and Tuesdays (2)
+            specialDays: [
+                { value: "12:00", text: "12:00 PM" },
+                { value: "12:30", text: "12:30 PM" },
+                { value: "13:00", text: "1:00 PM" },
+                { value: "13:30", text: "1:30 PM" },
+                { value: "14:00", text: "2:00 PM" },
+                { value: "14:30", text: "2:30 PM" },
+                { value: "15:00", text: "3:00 PM" },
+                { value: "15:30", text: "3:30 PM" },
+                { value: "16:00", text: "4:00 PM" },
+                { value: "16:30", text: "4:30 PM" },
+                { value: "17:00", text: "5:00 PM" }
+            ]
+        };
+
+        // Restrict date selection to today or future dates
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        // Listen for date changes
+        dateInput.addEventListener('change', (e) => {
+            if (!e.target.value) {
+                timeSelect.innerHTML = '<option value="">Please select a valid pickup date first</option>';
+                timeSelect.disabled = true;
+                return;
+            }
+
+            const selectedDate = new Date(e.target.value + 'T00:00:00');
+            const dayOfWeek = selectedDate.getDay(); // 0 = Sun, 1 = Mon, 2 = Tue, ...
+
+            timeSelect.disabled = false;
+            timeSelect.innerHTML = '<option value="" disabled selected>Select pickup time</option>';
+
+            // Choose schedule based on day of the week
+            const slots = (dayOfWeek === 1 || dayOfWeek === 2) 
+                ? timeSchedules.specialDays 
+                : timeSchedules.standard;
+
+            // Populate dropdown options
+            slots.forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot.value;
+                option.textContent = slot.text;
+                timeSelect.appendChild(option);
+            });
+        });
+
+        // Form submission handler
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('Success! Order Inquiry ID #' + result.orderId + ' has been submitted.');
+                    e.target.reset();
+                    timeSelect.disabled = true;
+                    timeSelect.innerHTML = '<option value="">Please select a valid pickup date first</option>';
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Failed to submit form.');
+            }
+        });
+    </script>
+  </body>
+</html>
