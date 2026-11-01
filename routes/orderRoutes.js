@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs'); // 1. Require the native fs module
+const fs = require('fs');
 const db = require('../config/db');
 
-// 2. Automatically create public/uploads folder if it doesn't exist on Render's disk
+// Automatically create public/uploads folder if it doesn't exist on Render's disk
 const uploadDir = path.join(__dirname, '../public/uploads');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
@@ -32,9 +32,11 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
 
         const {
             customer_name,
-            customer_contact,
+            customer_email,
+            customer_mobile,
             pickup_date,
             pickup_time,
+            cake_shape,
             cake_size,
             cake_flavour,
             candle_option,
@@ -43,20 +45,20 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             payment_method
         } = req.body;
 
-        // 1. Insert into ORDERS table
+        // 1. Insert into ORDERS table with separate email and mobile fields
         const [orderResult] = await connection.query(
-            `INSERT INTO ORDERS (CUSTOMER_NAME, CUSTOMER_CONTACT, PICKUP_DATE, PICKUP_TIME, PAYMENT_METHOD) 
-             VALUES (?, ?, ?, ?, ?)`,
-            [customer_name, customer_contact, pickup_date, pickup_time, payment_method || 'E-Transfer']
+            `INSERT INTO ORDERS (CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_MOBILE, PICKUP_DATE, PICKUP_TIME, PAYMENT_METHOD) 
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [customer_name, customer_email, customer_mobile, pickup_date, pickup_time, payment_method || 'E-Transfer']
         );
 
         const orderId = orderResult.insertId;
 
-        // 2. Insert into CAKE_SPECS table
+        // 2. Insert into CAKE_SPECS table including cake shape
         await connection.query(
-            `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES) 
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [orderId, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '']
+            `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES) 
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [orderId, cake_shape, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '']
         );
 
         // 3. Insert into INSPO_PICS table if photos were uploaded
@@ -94,7 +96,8 @@ router.get('/orders', async (req, res) => {
             SELECT 
                 o.ID AS order_id,
                 o.CUSTOMER_NAME,
-                o.CUSTOMER_CONTACT,
+                o.CUSTOMER_EMAIL,
+                o.CUSTOMER_MOBILE,
                 o.PICKUP_DATE,
                 o.PICKUP_TIME,
                 o.PAYMENT_METHOD,
@@ -102,6 +105,7 @@ router.get('/orders', async (req, res) => {
                 o.TOTAL_PRICE,
                 o.STATUS,
                 o.CREATED_AT,
+                cs.CAKE_SHAPE,
                 cs.CAKE_SIZE,
                 cs.CAKE_FLAVOUR,
                 cs.CANDLE_OPTION,
