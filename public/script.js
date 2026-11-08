@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('orderForm');
     const submitBtn = form.querySelector('button[type="submit"]');
 
-    // Define schedules per pickup day
     const timeSchedules = {
         standard: [
             { value: "16:30", text: "4:30 PM" },
@@ -33,22 +32,35 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
-    // Restrict date selection to today or future dates
+    // Restrict selection
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
 
-    // Listen for date changes
-    dateInput.addEventListener('change', (e) => {
-        if (!e.target.value) {
+    // Listen for date changes and fetch booked slots
+    dateInput.addEventListener('change', async (e) => {
+        const selectedDateVal = e.target.value;
+        if (!selectedDateVal) {
             timeSelect.innerHTML = '<option value="">Please select a valid pickup date first</option>';
             timeSelect.disabled = true;
             return;
         }
 
-        const selectedDate = new Date(e.target.value + 'T00:00:00');
+        const selectedDate = new Date(selectedDateVal + 'T00:00:00');
         const dayOfWeek = selectedDate.getDay(); // 0 = Sun, 1 = Mon, 2 = Tue, ...
 
         timeSelect.disabled = false;
+        timeSelect.innerHTML = '<option value="" disabled selected>Loading available times...</option>';
+
+        let bookedTimes = [];
+        try {
+            const res = await fetch(`/api/booked-slots?date=${selectedDateVal}`);
+            if (res.ok) {
+                bookedTimes = await res.json();
+            }
+        } catch (err) {
+            console.error('Failed to fetch booked slots:', err);
+        }
+
         timeSelect.innerHTML = '<option value="" disabled selected>Select pickup time</option>';
 
         const slots = (dayOfWeek === 1 || dayOfWeek === 2) 
@@ -58,16 +70,24 @@ document.addEventListener('DOMContentLoaded', () => {
         slots.forEach(slot => {
             const option = document.createElement('option');
             option.value = slot.value;
-            option.textContent = slot.text;
+            
+            if (bookedTimes.includes(slot.value)) {
+                option.textContent = `${slot.text} (Booked)`;
+                option.disabled = true;
+                option.style.color = '#999';
+            } else {
+                option.textContent = slot.text;
+            }
+
             timeSelect.appendChild(option);
         });
     });
 
-    // Form submission handler with disable-on-submit logic
+    // Disable-on-submit logic
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // Disable button immediately to prevent mobile double-taps
+        // Disable button immediately to prevent double-taps
         submitBtn.disabled = true;
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Submitting Order...';
@@ -93,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error(err);
             alert('Failed to submit form. Please check your network connection.');
         } finally {
-            // Re-enable button and restore text once response finishes
+            // Re-enable button and restore text
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }

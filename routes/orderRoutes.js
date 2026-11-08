@@ -45,7 +45,18 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             payment_method
         } = req.body;
 
-        // 1. Insert into ORDERS table with separate email and mobile fields
+        //Check if the pickup date and time slot is already booked (excluding cancelled orders)
+        const [existingSlot] = await connection.query(
+            `SELECT ID FROM ORDERS WHERE PICKUP_DATE = ? AND PICKUP_TIME = ? AND STATUS != 'Cancelled'`,
+            [pickup_date, pickup_time]
+        );
+
+        if (existingSlot.length > 0) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'This pickup date and time slot is already booked. Please choose another time.' });
+        }
+
+        //Insert into ORDERS table 
         const [orderResult] = await connection.query(
             `INSERT INTO ORDERS (CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_MOBILE, PICKUP_DATE, PICKUP_TIME, PAYMENT_METHOD) 
              VALUES (?, ?, ?, ?, ?, ?)`,
@@ -54,14 +65,14 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
 
         const orderId = orderResult.insertId;
 
-        // 2. Insert into CAKE_SPECS table including cake shape
+        //Insert into CAKE_SPECS 
         await connection.query(
             `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES) 
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [orderId, cake_shape, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '']
         );
 
-        // 3. Insert into INSPO_PICS table if photos were uploaded
+        //Insert into INSPO_PICS table if photos were uploaded
         if (req.files && req.files.length > 0) {
             const photoValues = req.files.map(file => [
                 orderId, 
@@ -86,6 +97,28 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
         res.status(500).json({ error: 'Failed to process order inquiry', details: error.message });
     } finally {
         connection.release();
+    }
+});
+
+// GET /api/booked-slots - Fetch taken times for a specific date
+router.get('/booked-slots', async (req, res) => {
+    try {
+        const { date } = req.query;
+        if (!date) {
+            return res.status(400).json({ error: 'Date query parameter is required' });
+        }
+
+        const [booked] = await db.query(
+            `SELECT PICKUP_TIME FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
+            [date]
+        );
+
+        // Return an array of booked time strings (e.g., ["17:00:00", "18:30:00"])
+        const bookedTimes = booked.map(row => row.PICKUP_TIME.slice(0, 5)); // Normalize to HH:MM format
+        res.json(bookedTimes);
+    } catch (error) {
+        console.error('Error fetching booked slots:', error);
+        res.status(500).json({ error: 'Failed to fetch booked slots' });
     }
 });
 
