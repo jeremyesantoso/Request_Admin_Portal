@@ -1,24 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 const db = require('../config/db');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// Automatically create public/uploads folder if it doesn't exist on Render's disk
-const uploadDir = path.join(__dirname, '../public/uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configure Cloudinary with credentials from .env
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-// Configure Multer for local file storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+// Configure Multer to stream uploads directly to Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'cakekue-inquiries', // Folder name inside your Cloudinary dashboard
+        allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+        transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
     }
 });
 
@@ -45,7 +45,7 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             payment_method
         } = req.body;
 
-        //Check if the pickup date and time slot is already booked (excluding cancelled orders)
+        // Check if the pickup date and time slot is already booked (excluding cancelled orders)
         const [existingSlot] = await connection.query(
             `SELECT ID FROM ORDERS WHERE PICKUP_DATE = ? AND PICKUP_TIME = ? AND STATUS != 'Cancelled'`,
             [pickup_date, pickup_time]
@@ -56,7 +56,7 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             return res.status(400).json({ error: 'This pickup date and time slot is already booked. Please choose another time.' });
         }
 
-        //Insert into ORDERS table 
+        // Insert into ORDERS table 
         const [orderResult] = await connection.query(
             `INSERT INTO ORDERS (CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_MOBILE, PICKUP_DATE, PICKUP_TIME, PAYMENT_METHOD) 
              VALUES (?, ?, ?, ?, ?, ?)`,
@@ -65,18 +65,18 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
 
         const orderId = orderResult.insertId;
 
-        //Insert into CAKE_SPECS 
+        // Insert into CAKE_SPECS 
         await connection.query(
             `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES) 
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [orderId, cake_shape, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '']
         );
 
-        //Insert into INSPO_PICS table if photos were uploaded
+        // Insert Cloudinary secure URLs into INSPO_PICS table if photos were uploaded
         if (req.files && req.files.length > 0) {
             const photoValues = req.files.map(file => [
                 orderId, 
-                `/uploads/${file.filename}`
+                file.path 
             ]);
 
             await connection.query(
@@ -122,7 +122,7 @@ router.get('/booked-slots', async (req, res) => {
     }
 });
 
-// GET /api/orders - Fetch all orders with specifications (Admin View)
+// GET /api/orders - Fetch all orders with specifications (Admin View)[cite: 3]
 router.get('/orders', async (req, res) => {
     try {
         const query = `
