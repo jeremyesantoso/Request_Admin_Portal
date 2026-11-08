@@ -113,8 +113,8 @@ router.get('/booked-slots', async (req, res) => {
             [date]
         );
 
-        // Return an array of booked time strings (e.g., ["17:00:00", "18:30:00"])
-        const bookedTimes = booked.map(row => row.PICKUP_TIME.slice(0, 5)); // Normalize to HH:MM format
+        // Return an array of booked time strings 
+        const bookedTimes = booked.map(row => row.PICKUP_TIME.slice(0, 5)); 
         res.json(bookedTimes);
     } catch (error) {
         console.error('Error fetching booked slots:', error);

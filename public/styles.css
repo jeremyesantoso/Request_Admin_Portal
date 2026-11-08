@@ -143,3 +143,31 @@ button[type="submit"]:hover {
     background: #e06666;
     transform: translateY(-1px);
 }
+
+.terms-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--brand-pink-light);
+    border: 1px dashed #f8c8dc;
+    padding: 14px;
+    border-radius: 10px;
+    margin: 25px 0 15px 0;
+}
+
+.terms-group input[type="checkbox"] {
+    margin-top: 3px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--brand-pink-dark);
+    cursor: pointer;
+}
+
+.terms-group label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #d63384;
+    cursor: pointer;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
