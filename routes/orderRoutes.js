@@ -16,7 +16,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'cakekue-inquiries', // Folder name inside your Cloudinary dashboard
+        folder: 'cakekue-inquiries',
         allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
         transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
     }
@@ -45,7 +45,18 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             payment_method
         } = req.body;
 
-        // Check if the pickup date and time slot is already booked (excluding cancelled orders)
+        //Make daily capacity limit of 4 orders a day
+        const [dailyOrders] = await connection.query(
+            `SELECT COUNT(*) AS total FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
+            [pickup_date]
+        );
+
+        if (dailyOrders[0].total >= 4) {
+            await connection.rollback();
+            return res.status(400).json({ error: 'This date has reached its maximum capacity of 4 custom orders and is fully booked. Please choose another day.' });
+        }
+
+        //Check if pickup date and time slot is already booked
         const [existingSlot] = await connection.query(
             `SELECT ID FROM ORDERS WHERE PICKUP_DATE = ? AND PICKUP_TIME = ? AND STATUS != 'Cancelled'`,
             [pickup_date, pickup_time]
@@ -108,21 +119,32 @@ router.get('/booked-slots', async (req, res) => {
             return res.status(400).json({ error: 'Date query parameter is required' });
         }
 
+        // Check if the whole day has reached the limit of 4 orders
+        const [dailyCountResult] = await db.query(
+            `SELECT COUNT(*) AS total FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
+            [date]
+        );
+
+        const isDayFullyBooked = dailyCountResult[0].total >= 4;
+
         const [booked] = await db.query(
             `SELECT PICKUP_TIME FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
             [date]
         );
 
-        // Return an array of booked time strings 
         const bookedTimes = booked.map(row => row.PICKUP_TIME.slice(0, 5)); 
-        res.json(bookedTimes);
+        
+        res.json({
+            isFullyBooked: isDayFullyBooked,
+            bookedTimes: bookedTimes
+        });
     } catch (error) {
         console.error('Error fetching booked slots:', error);
         res.status(500).json({ error: 'Failed to fetch booked slots' });
     }
 });
 
-// GET /api/orders - Fetch all orders with specifications (Admin View)[cite: 3]
+// GET /api/orders - Fetch all orders with specifications (Admin View)
 router.get('/orders', async (req, res) => {
     try {
         const query = `

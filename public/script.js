@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
     dateInput.setAttribute('min', today);
 
-    // Listen for date changes and fetch booked slots
+    // Listen for date changes and fetch booked slots / capacity limits
     dateInput.addEventListener('change', async (e) => {
         const selectedDateVal = e.target.value;
         if (!selectedDateVal) {
@@ -49,16 +49,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const dayOfWeek = selectedDate.getDay(); // 0 = Sun, 1 = Mon, 2 = Tue, ...
 
         timeSelect.disabled = false;
-        timeSelect.innerHTML = '<option value="" disabled selected>Loading available times...</option>';
+        timeSelect.innerHTML = '<option value="" disabled selected>Loading availability...</option>';
 
         let bookedTimes = [];
+        let isFullyBooked = false;
+
         try {
             const res = await fetch(`/api/booked-slots?date=${selectedDateVal}`);
             if (res.ok) {
-                bookedTimes = await res.json();
+                const data = await res.json();
+                bookedTimes = data.bookedTimes;
+                isFullyBooked = data.isFullyBooked;
             }
         } catch (err) {
             console.error('Failed to fetch booked slots:', err);
+        }
+
+        // Block everything if the entire day hit the limit of 4 orders
+        if (isFullyBooked) {
+            timeSelect.innerHTML = '<option value="" disabled selected>Date Fully Booked (Max 4 Orders Reached)</option>';
+            timeSelect.disabled = true;
+            return;
         }
 
         timeSelect.innerHTML = '<option value="" disabled selected>Select pickup time</option>';
