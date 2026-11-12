@@ -69,8 +69,8 @@
           <select name="cake_shape" required>
             <option value="" disabled selected>Please select a shape</option>
             <option value='Round'>Round</option>
-            <option value='Heart'>Heart</option>
-            <option value='Custom'>Custom</option>
+            <option value='Heart'>Heart(+10$)</option>
+            <option value='Custom'>Custom(+10$)</option>
           </select>
         </div>
 
@@ -99,6 +99,24 @@
             <option value="Strawberry Shortcake">Strawberry Shortcake</option>
             <option value="Red Velvet">Red Velvet</option>
           </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Cake Add-ons</label>
+          <div class="notice">Select any extras you would like to include. Final pricing will be confirmed in your custom quote.</div>
+        </div>
+
+        <div class="form-group terms-group horizontal-addons" style="margin-top: 5px;">
+          <label><input type="checkbox" name="addons" value="Custom message (2-5$)"> Custom message ($2-$5)</label>
+          <label><input type="checkbox" name="addons" value="Vintage piping (5-15$)"> Vintage piping ($5-$15)</label>
+          <label><input type="checkbox" name="addons" value="Sugar pearls (5-10$)"> Sugar pearls ($5-$10)</label>
+          <label><input type="checkbox" name="addons" value="Ribbons (2-5$)"> Ribbons ($2-$5)</label>
+          <label><input type="checkbox" name="addons" value="Glitter top (3$)"> Glitter top ($3)</label>
+          <label><input type="checkbox" name="addons" value="Maraschino Cherries (2$/ea)"> Maraschino Cherries ($2/ea)</label>
+          <label><input type="checkbox" name="addons" value="Butterflies (5$)"> Butterflies ($5)</label>
+          <label><input type="checkbox" name="addons" value="2D design (5-10$)"> 2D design ($5-$10)</label>
+          <label><input type="checkbox" name="addons" value="3D character (8-10$)"> 3D character ($8-$10)</label>
+          <label><input type="checkbox" name="addons" value="Disco ball (10$ for 3)"> Disco ball ($10 for 3)</label>
         </div>
 
         <div class="form-group">
@@ -130,7 +148,7 @@
         </div>
 
         <div class="form-group">
-          <label>Inspiration Pictures (Optional)</label>
+          <label>Inspo Pictures (Optional)</label>
           <div class="file-input-wrapper">
             <input type="file" name="inspo_photos" multiple accept="image/*" />
           </div>
@@ -144,6 +162,8 @@
             <option value="Cash">Cash</option>
           </select>
         </div>
+
+        <div class="form-section-title">5. Terms & Conditions</div>
 
         <div class="form-group terms-group">
           <input type="checkbox" id="terms_consent" name="terms_consent" required>

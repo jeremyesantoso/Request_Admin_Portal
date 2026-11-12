@@ -42,10 +42,11 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             candle_option,
             diet_notes,
             design_message_notes,
-            payment_method
+            payment_method,
+            addons 
         } = req.body;
 
-        //Make daily capacity limit of 4 orders a day
+        // Make daily capacity limit of 4 orders a day
         const [dailyOrders] = await connection.query(
             `SELECT COUNT(*) AS total FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
             [pickup_date]
@@ -53,10 +54,10 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
 
         if (dailyOrders[0].total >= 4) {
             await connection.rollback();
-            return res.status(400).json({ error: 'This date has reached its maximum capacity of 4 custom orders and is fully booked. Please choose another day.' });
+            return res.status(400).json({ error: 'This date is fully booked. Please choose another day.' });
         }
 
-        //Check if pickup date and time slot is already booked
+        // Check if pickup date and time slot is already booked
         const [existingSlot] = await connection.query(
             `SELECT ID FROM ORDERS WHERE PICKUP_DATE = ? AND PICKUP_TIME = ? AND STATUS != 'Cancelled'`,
             [pickup_date, pickup_time]
@@ -67,6 +68,11 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             return res.status(400).json({ error: 'This pickup date and time slot is already booked. Please choose another time.' });
         }
 
+        // Format checkboxes into a clean comma-separated string (or 'None' if none selected)
+        const formattedAddons = Array.isArray(addons) 
+            ? addons.join(', ') 
+            : (addons || 'None');
+
         // Insert into ORDERS table 
         const [orderResult] = await connection.query(
             `INSERT INTO ORDERS (CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_MOBILE, PICKUP_DATE, PICKUP_TIME, PAYMENT_METHOD) 
@@ -76,11 +82,11 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
 
         const orderId = orderResult.insertId;
 
-        // Insert into CAKE_SPECS 
+        // Insert into CAKE_SPECS (including formattedAddons)
         await connection.query(
-            `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [orderId, cake_shape, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '']
+            `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES, ADDONS) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [orderId, cake_shape, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '', formattedAddons]
         );
 
         // Insert Cloudinary secure URLs into INSPO_PICS table if photos were uploaded
@@ -119,7 +125,7 @@ router.get('/booked-slots', async (req, res) => {
             return res.status(400).json({ error: 'Date query parameter is required' });
         }
 
-        // Check if the whole day has reached the limit of 4 orders
+        // Check if the whole day has reached the limit
         const [dailyCountResult] = await db.query(
             `SELECT COUNT(*) AS total FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
             [date]
@@ -166,6 +172,7 @@ router.get('/orders', async (req, res) => {
                 cs.CANDLE_OPTION,
                 cs.DIET_NOTES,
                 cs.DESIGN_MESSAGE_NOTES,
+                cs.ADDONS, -- <--- INCLUDE ADDONS IN ADMIN QUERY
                 GROUP_CONCAT(ip.PHOTO_URL) AS inspo_photos
             FROM ORDERS o
             LEFT JOIN CAKE_SPECS cs ON o.ID = cs.ORDER_ID

@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap');
 
 :root {
-    --brand-pink: #ffb6c1;
-    --brand-pink-dark: #f08080;
-    --brand-pink-light: #fff0f5;
-    --text-dark: #4a4a4a;
+    --brand-pink: #fec5e5;       
+    --brand-pink-dark: #e34a8a;  
+    --brand-pink-light: #fff1fa; 
+    --text-dark: #4a4a4a;        
     --border-radius: 16px;
 }
 
@@ -170,4 +170,18 @@ button[type="submit"]:hover {
     cursor: pointer;
     line-height: 1.4;
     margin-bottom: 0;
+}
+
+.terms-group.horizontal-addons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px; 
+}
+
+.terms-group.horizontal-addons label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: normal;
+    cursor: pointer;
 }

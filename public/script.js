@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to fetch booked slots:', err);
         }
 
-        // Block everything if the entire day hit the limit of 4 orders
+        // Block everything if the entire day hit the limit 
         if (isFullyBooked) {
-            timeSelect.innerHTML = '<option value="" disabled selected>Date Fully Booked (Max 4 Orders Reached)</option>';
+            timeSelect.innerHTML = '<option value="" disabled selected>Date Fully Booked</option>';
             timeSelect.disabled = true;
             return;
         }
