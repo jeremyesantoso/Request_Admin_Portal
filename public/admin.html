@@ -15,7 +15,7 @@
                 <p>Manage incoming custom cake inquiries, review reference imagery, and update quotes.</p>
             </div>
             <div>
-                <a href="/" target="_blank" style="font-family: 'Fredoka', cursive; color: var(--brand-pink-dark); text-decoration: none; font-size: 14px;">🌐 View Live Form</a>
+                <a href="/" target="_blank" class="live-form-link">🌐 View Live Form</a>
             </div>
         </header>
 
@@ -23,5 +23,49 @@
             <div class="empty-state">Loading incoming inquiries...</div>
         </section>
     </main>
+
+    <!-- Reusable Order Card Template -->
+    <template id="order-card-template">
+        <div class="order-card">
+            <div class="order-header">
+                <h3 class="order-title"></h3>
+                <span class="badge order-badge"></span>
+            </div>
+            
+            <div class="order-grid">
+                <div><strong>Email:</strong> <span class="field-email"></span></div>
+                <div><strong>Mobile:</strong> <span class="field-mobile"></span></div>
+                <div><strong>Pickup:</strong> <span class="field-pickup"></span></div>
+                <div><strong>Configuration:</strong> <span class="field-config"></span></div>
+                <div><strong>Flavour:</strong> <span class="field-flavour"></span></div>
+                <div><strong>Candles:</strong> <span class="field-candles"></span></div>
+                <div><strong>Add-ons:</strong> <span class="field-addons"></span></div>
+                <div><strong>Payment Choice:</strong> <span class="field-payment"></span></div>
+            </div>
+
+            <div class="order-notes-box">
+                <div class="note-row"><strong>Design Notes:</strong> <span class="field-design-notes"></span></div>
+                <div><strong>Dietary Restrictions:</strong> <span class="field-diet-notes"></span></div>
+            </div>
+
+            <div>
+                <span class="ref-photos-label">Reference Photos:</span>
+                <div class="photo-preview-container"></div>
+            </div>
+
+            <div class="admin-actions">
+                <input type="number" step="0.01" placeholder="Final Price ($)" class="price-input">
+                <select class="status-select">
+                    <option value="New Inquiry">New Inquiry</option>
+                    <option value="Quote Sent">Quote Sent</option>
+                    <option value="Deposit Paid">Deposit Paid</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button class="btn-primary save-btn">Save Changes</button>
+            </div>
+        </div>
+    </template>
 </body>
 </html>

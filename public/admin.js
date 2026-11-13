@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('orders-list');
+    const template = document.getElementById('order-card-template');
 
     try {
         const res = await fetch('/api/orders');
@@ -13,64 +14,71 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         container.innerHTML = '';
+        
         orders.forEach(order => {
-            const card = document.createElement('div');
-            card.className = 'order-card';
+            // Clone the template content cleanly
+            const clone = template.content.cloneNode(true);
 
-            // Build photo previews safely
-            let photosHtml = '<span style="color: var(--text-muted); font-size: 13px;">No reference photos uploaded.</span>';
+            // Populate text fields safely
+            clone.querySelector('.order-title').textContent = `Order #${order.order_id} • ${order.CUSTOMER_NAME}`;
+            
+            const badge = clone.querySelector('.order-badge');
+            badge.textContent = order.STATUS;
+            badge.id = `badge_${order.order_id}`;
+
+            clone.querySelector('.field-email').textContent = order.CUSTOMER_EMAIL;
+            clone.querySelector('.field-mobile').textContent = order.CUSTOMER_MOBILE;
+            clone.querySelector('.field-pickup').textContent = `${order.PICKUP_DATE.split('T')[0]} at ${order.PICKUP_TIME}`;
+            clone.querySelector('.field-config').textContent = `${order.CAKE_SHAPE}, ${order.CAKE_SIZE}`;
+            clone.querySelector('.field-flavour').textContent = order.CAKE_FLAVOUR;
+            clone.querySelector('.field-candles').textContent = order.CANDLE_OPTION;
+            clone.querySelector('.field-addons').textContent = order.ADDONS || 'None';
+            clone.querySelector('.field-payment').textContent = order.PAYMENT_METHOD;
+            clone.querySelector('.field-design-notes').textContent = order.DESIGN_MESSAGE_NOTES || 'None';
+            clone.querySelector('.field-diet-notes').textContent = order.DIET_NOTES;
+
+            // Handle Photo Previews
+            const photoContainer = clone.querySelector('.photo-preview-container');
             if (order.inspo_photos) {
+                const photoBox = document.createElement('div');
+                photoBox.className = 'photo-preview-box';
                 const photoUrls = order.inspo_photos.split(',');
-                photosHtml = '<div class="photo-preview-box">' + 
-                    photoUrls.map(url => `<a href="${url}" target="_blank"><img src="${url}" alt="Inspo Ref"></a>`).join('') + 
-                    '</div>';
+                
+                photoUrls.forEach(url => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.target = '_blank';
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Inspo Ref';
+                    a.appendChild(img);
+                    photoBox.appendChild(a);
+                });
+                photoContainer.appendChild(photoBox);
+            } else {
+                const span = document.createElement('span');
+                span.className = 'no-photos-text';
+                span.textContent = 'No reference photos uploaded.';
+                photoContainer.appendChild(span);
             }
 
-            card.innerHTML = `
-                <div class="order-header">
-                    <h3>Order #${order.order_id} &bull; ${order.CUSTOMER_NAME}</h3>
-                    <span class="badge" id="badge_${order.order_id}">${order.STATUS}</span>
-                </div>
-                
-                <div class="order-grid">
-                    <div><strong>Email:</strong> ${order.CUSTOMER_EMAIL}</div>
-                    <div><strong>Mobile:</strong> ${order.CUSTOMER_MOBILE}</div>
-                    <div><strong>Pickup:</strong> ${order.PICKUP_DATE.split('T')[0]} at ${order.PICKUP_TIME}</div>
-                    <div><strong>Configuration:</strong> ${order.CAKE_SHAPE}, ${order.CAKE_SIZE}</div>
-                    <div><strong>Flavour:</strong> ${order.CAKE_FLAVOUR}</div>
-                    <div><strong>Candles:</strong> ${order.CANDLE_OPTION}</div>
-                    <div><strong>Add-ons:</strong> ${order.ADDONS || 'None'}</div>
-                    <div><strong>Payment Choice:</strong> ${order.PAYMENT_METHOD}</div>
-                </div>
+            // Setup input IDs and event bindings for inputs/buttons
+            const priceInput = clone.querySelector('.price-input');
+            priceInput.id = `price_${order.order_id}`;
+            priceInput.value = order.TOTAL_PRICE || '';
 
-                <div class="order-notes-box">
-                    <div style="margin-bottom: 4px;"><strong>Design Notes:</strong> ${order.DESIGN_MESSAGE_NOTES || 'None'}</div>
-                    <div><strong>Dietary Restrictions:</strong> ${order.DIET_NOTES}</div>
-                </div>
+            const statusSelect = clone.querySelector('.status-select');
+            statusSelect.id = `status_${order.order_id}`;
+            statusSelect.value = order.STATUS;
 
-                <div>
-                    <strong style="font-size: 13px; color: var(--text-muted);">Reference Photos:</strong>
-                    ${photosHtml}
-                </div>
+            const saveBtn = clone.querySelector('.save-btn');
+            saveBtn.addEventListener('click', () => updateOrder(order.order_id));
 
-                <div class="admin-actions">
-                    <input type="number" step="0.01" placeholder="Final Price ($)" id="price_${order.order_id}" value="${order.TOTAL_PRICE || ''}">
-                    <select id="status_${order.order_id}">
-                        <option value="New Inquiry" ${order.STATUS === 'New Inquiry' ? 'selected' : ''}>New Inquiry</option>
-                        <option value="Quote Sent" ${order.STATUS === 'Quote Sent' ? 'selected' : ''}>Quote Sent</option>
-                        <option value="Deposit Paid" ${order.STATUS === 'Deposit Paid' ? 'selected' : ''}>Deposit Paid</option>
-                        <option value="In Progress" ${order.STATUS === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                        <option value="Completed" ${order.STATUS === 'Completed' ? 'selected' : ''}>Completed</option>
-                        <option value="Cancelled" ${order.STATUS === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                    </select>
-                    <button class="btn-primary" onclick="updateOrder(${order.order_id})">Save Changes</button>
-                </div>
-            `;
-            container.appendChild(card);
+            container.appendChild(clone);
         });
     } catch (err) {
         console.error(err);
-        container.innerHTML = '<div class="empty-state" style="color: #e34a8a;">Failed to load orders from the server.</div>';
+        container.innerHTML = '<div class="empty-state error-state">Failed to load orders from the server.</div>';
     }
 });
 
