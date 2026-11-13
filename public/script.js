@@ -166,6 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. FORM SUBMISSION
     // ==========================================
     form.addEventListener('submit', async (e) => {
+        //Check if the browser's native validation fails (e.g., missing required fields)
+        if (!form.checkValidity()) {
+            form.reportValidity(); 
+            return;
+        }
+
         e.preventDefault();
 
         submitBtn.disabled = true;

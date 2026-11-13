@@ -4,6 +4,8 @@ const multer = require('multer');
 const db = require('../config/db');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const adminAuth = require('../middleware/adminAuth');
+const { sendQuoteEmail } = require('../utils/mailer');
 
 // Configure Cloudinary with credentials from .env
 cloudinary.config({
@@ -58,6 +60,12 @@ router.post('/orders', (req, res, next) => {
             payment_method,
             addons 
         } = req.body;
+
+        // Validate that a payment method was selected
+        if (!payment_method || payment_method.trim() === '') {
+            await connection.rollback();
+            return res.status(400).json({ error: 'Please select a preferred payment method.' });
+        }
 
         // Enforce daily capacity limit of 4 orders a day
         const [dailyOrders] = await connection.query(
@@ -182,7 +190,7 @@ router.get('/booked-slots', async (req, res) => {
 });
 
 // GET /api/orders - Fetch all orders with specifications (Admin View)
-router.get('/orders', async (req, res) => {
+router.get('/orders', adminAuth, async (req, res) => {
     try {
         const query = `
             SELECT 
@@ -219,8 +227,8 @@ router.get('/orders', async (req, res) => {
     }
 });
 
-// PATCH /api/orders/:id/status - Update order price quote and status (Admin Action)
-router.patch('/orders/:id/status', async (req, res) => {
+// PATCH /api/orders/:id/status - Update order price quote, status, and trigger quote email
+router.patch('/orders/:id/status', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
         const { total_price, status } = req.body;
@@ -234,10 +242,37 @@ router.patch('/orders/:id/status', async (req, res) => {
             return res.status(404).json({ error: 'Order not found' });
         }
 
-        res.json({ message: 'Order updated successfully!' });
+        // Automatically send quote invoice email if status is updated to 'Quote Sent'
+        if (status === 'Quote Sent') {
+            if (!total_price || parseFloat(total_price) <= 0) {
+                return res.status(400).json({ error: 'Please enter a valid final price before sending a quote.' });
+            }
+
+            const [rows] = await db.query(
+                `SELECT 
+                    o.ID AS order_id, o.CUSTOMER_NAME, o.CUSTOMER_EMAIL, 
+                    o.PICKUP_DATE, o.PICKUP_TIME, o.TOTAL_PRICE,
+                    cs.CAKE_SHAPE, cs.CAKE_SIZE, cs.CAKE_FLAVOUR, 
+                    cs.CANDLE_OPTION, cs.DIET_NOTES, cs.DESIGN_MESSAGE_NOTES, cs.ADDONS
+                 FROM ORDERS o
+                 LEFT JOIN CAKE_SPECS cs ON o.ID = cs.ORDER_ID
+                 WHERE o.ID = ?`,
+                [id]
+            );
+
+            if (rows.length > 0) {
+                await sendQuoteEmail(rows[0]);
+            }
+        }
+
+        res.json({ 
+            message: status === 'Quote Sent' 
+                ? 'Order updated and quote invoice emailed to customer!' 
+                : 'Order updated successfully!' 
+        });
     } catch (error) {
         console.error('Error updating order:', error);
-        res.status(500).json({ error: 'Failed to update order status and price' });
+        res.status(500).json({ error: 'Failed to update order status or send email' });
     }
 });
 
