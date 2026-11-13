@@ -50,16 +50,18 @@
         <div class="form-section-title">2. Pickup Details</div>
 
         <div class="form-group">
-            <label>Pickup Date *</label>
-            <input type="date" id="pickup_date" name="pickup_date" required>
-            <div class="notice">Available everyday. Special hours apply on Mondays and Tuesdays.</div>
+          <label>Pickup Date *</label>
+          <input type="date" id="pickup_date" name="pickup_date" required />
+          <div class="notice">
+            Available everyday. Special hours apply on Mondays and Tuesdays.
+          </div>
         </div>
 
         <div class="form-group">
-            <label>Pickup Time *</label>
-            <select id="pickup_time" name="pickup_time" required disabled>
-                <option value="">Please select a valid pickup date first</option>
-            </select>
+          <label>Pickup Time *</label>
+          <select id="pickup_time" name="pickup_time" required disabled>
+            <option value="">Please select a valid pickup date first</option>
+          </select>
         </div>
 
         <div class="form-section-title">3. Cake Specifications</div>
@@ -68,9 +70,9 @@
           <label>Cake Shape *</label>
           <select name="cake_shape" required>
             <option value="" disabled selected>Please select a shape</option>
-            <option value='Round'>Round</option>
-            <option value='Heart'>Heart(+10$)</option>
-            <option value='Custom'>Custom(+10$)</option>
+            <option value="Round">Round</option>
+            <option value="Heart">Heart(+10$)</option>
+            <option value="Custom">Custom(+10$)</option>
           </select>
         </div>
 
@@ -103,30 +105,84 @@
 
         <div class="form-group" style="margin-bottom: 8px;">
           <label>Cake Add-ons</label>
-          <div class="notice">Select any extras you would like to include. Final pricing will be confirmed in your custom quote.</div>
+          <div class="notice">
+            Select any extras you would like to include. Final pricing will be
+            confirmed in your custom quote.
+          </div>
         </div>
 
-        <div class="form-group terms-group horizontal-addons" style="margin-top: 5px;">
-          <label><input type="checkbox" name="addons" value="Custom message (2-5$)"> Custom message ($2-$5)</label>
-          <label><input type="checkbox" name="addons" value="Vintage piping (5-15$)"> Vintage piping ($5-$15)</label>
-          <label><input type="checkbox" name="addons" value="Sugar pearls (5-10$)"> Sugar pearls ($5-$10)</label>
-          <label><input type="checkbox" name="addons" value="Ribbons (2-5$)"> Ribbons ($2-$5)</label>
-          <label><input type="checkbox" name="addons" value="Glitter top (3$)"> Glitter top ($3)</label>
-          <label><input type="checkbox" name="addons" value="Maraschino Cherries (2$/ea)"> Maraschino Cherries ($2/ea)</label>
-          <label><input type="checkbox" name="addons" value="Butterflies (5$)"> Butterflies ($5)</label>
-          <label><input type="checkbox" name="addons" value="2D design (5-10$)"> 2D design ($5-$10)</label>
-          <label><input type="checkbox" name="addons" value="3D character (8-10$)"> 3D character ($8-$10)</label>
-          <label><input type="checkbox" name="addons" value="Disco ball (10$ for 3)"> Disco ball ($10 for 3)</label>
+        <div
+          class="form-group terms-group vertical-addons"
+          style="margin-top: 5px;"
+        >
+          <label
+            ><input type="checkbox" name="addons" value="Custom message (2-5$)" />
+            Custom message ($2-$5)</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="addons"
+              value="Vintage piping (5-15$)"
+            />
+            Vintage piping ($5-$15)</label
+          >
+          <label
+            ><input type="checkbox" name="addons" value="Sugar pearls (5-10$)" />
+            Sugar pearls ($5-$10)</label
+          >
+          <label
+            ><input type="checkbox" name="addons" value="Ribbons (2-5$)" />
+            Ribbons ($2-$5)</label
+          >
+          <label
+            ><input type="checkbox" name="addons" value="Glitter top (3$)" />
+            Glitter top ($3)</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="addons"
+              value="Maraschino Cherries (2$/ea)"
+            />
+            Maraschino Cherries ($2/ea)</label
+          >
+          <label
+            ><input type="checkbox" name="addons" value="Butterflies (5$)" />
+            Butterflies ($5)</label
+          >
+          <label
+            ><input type="checkbox" name="addons" value="2D design (5-10$)" />
+            2D design ($5-$10)</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="addons"
+              value="3D character (8-10$)"
+            />
+            3D character ($8-$10)</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="addons"
+              value="Disco ball (10$ for 3)"
+            />
+            Disco ball ($10 for 3)</label
+          >
         </div>
 
-        <div class="form-group">
-          <label>Candle Add-on</label>
-          <select name="candle_option">
-            <option value="None">None</option>
-            <option value="Standard (+$1)">Standard (+$1)</option>
-            <option value="Premium (+$3)">Premium (+$3)</option>
-          </select>
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>Candle Add-ons</label>
+          <div class="notice">
+            Select a candle type to specify your quantity. Pictures are shown
+            below for reference.
+          </div>
         </div>
+
+        <div id="candle-gallery" class="candle-gallery-box"></div>
+        <div id="candle-checklist" class="form-group terms-group vertical-addons"></div>
 
         <div class="form-group">
           <label>Dietary Restrictions / Allergies</label>
@@ -149,15 +205,23 @@
 
         <div class="form-group">
           <label>Inspo Pictures (Optional)</label>
+          <div class="notice" style="margin-bottom: 10px;">
+            Feel free to send us your inspo pics, but please be advised we do
+            not copy other baker's design and we'll use the inspo pic sent as
+            reference to craft a one-of-a-kind cake for you in our style
+          </div>
           <div class="file-input-wrapper">
             <input type="file" name="inspo_photos" multiple accept="image/*" />
           </div>
+          <div class="notice">You can upload up to 3 reference photos</div>
         </div>
 
         <div class="form-group">
           <label>Preferred Payment Method</label>
           <select name="payment_method">
-            <option value="" disabled selected>Please select a payment method</option>
+            <option value="" disabled selected>
+              Please select a payment method
+            </option>
             <option value="E-Transfer">E-Transfer</option>
             <option value="Cash">Cash</option>
           </select>
@@ -165,15 +229,53 @@
 
         <div class="form-section-title">5. Terms & Conditions</div>
 
+        <div class="terms-info-box">
+          <div class="terms-category">
+            <h4>cake design</h4>
+            <p>each cake made are one-of-a kind and customized to your order :) Pricing <u><strong>will vary</strong></u> based on size, design, and special requests</p>
+          </div>
+
+          <div class="terms-category">
+            <h4>order date</h4>
+            <p>cakes must be ordered and confirmed (50% deposit) at least 3 days in advance. if less than 3 days then there is a "urgent fee" applied to your final order</p>
+          </div>
+
+          <div class="terms-category">
+            <h4>design change</h4>
+            <p>once an order is confirmed, no changes can be applied</p>
+          </div>
+
+          <div class="terms-category">
+            <h4>payment</h4>
+            <p>a full payment or 50% deposit (non-refundable) is needed via e-transfer to secure your order. the remaining 50% is due on the pickup day</p>
+          </div>
+
+          <div class="terms-category">
+            <h4>cancellation</h4>
+            <p>order cancellations must be confirmed at least 3 days in advance to your pickup date</p>
+          </div>
+
+          <div class="terms-category">
+            <h4>delivery</h4>
+            <p>unfortunately delivery is not offered. pick up only<br>location : by joyce station or off grandview highway</p>
+          </div>
+
+          <div class="terms-category">
+            <h4>allergens</h4>
+            <p>our cakes are crafted in a home-based kitchen where various allergens may be present. thus, we cannot assure the complete absence of all potential allergens in your order</p>
+          </div>
+        </div>
+
         <div class="form-group terms-group">
           <input type="checkbox" id="terms_consent" name="terms_consent" required>
-            <label for="terms_consent">
-                I understand that orders that are confirmed / 50% deposited in less than 3 days prior to pickup day will include an urgent fee in your invoice.
-            </label>
+          <label for="terms_consent">
+            I understand and consent to the above terms & conditions.
+          </label>
         </div>
 
         <div class="deposit-warning">
-          *50% NONREFUNDABLE DOWNPAYMENT IS REQUIRED TO SECURE YOUR ORDER 🙂
+          Please give up to 48 hours for CakeKue admin to respond, thank you for
+          your patience 🙂
         </div>
 
         <button type="submit">Submit Inquiry</button>
