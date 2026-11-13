@@ -8,270 +8,316 @@
     <script src="script.js" defer></script>
   </head>
   <body>
-    <div class="portal-container">
-      <div class="header-section">
+    <main class="portal-container">
+      <header class="header-section">
         <h1 class="brand-title">cakekue</h1>
-        <div class="brand-subtitle">🎂 custom designs - Vancouver BC</div>
-      </div>
+        <p class="brand-subtitle">🎂 custom designs - Vancouver BC</p>
+      </header>
 
       <form id="orderForm" enctype="multipart/form-data">
-        <div class="form-section-title">1. Contact Information</div>
+        <!-- ==========================================
+             1. CONTACT INFORMATION
+        =========================================== -->
+        <section>
+          <h2 class="form-section-title">1. Contact Information</h2>
 
-        <div class="form-group">
-          <label>Your Name *</label>
-          <input
-            type="text"
-            name="customer_name"
-            placeholder="e.g. Jane Doe"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label>Email *</label>
-          <input
-            type="text"
-            name="customer_email"
-            placeholder="e.g. email@domain.com"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label>Mobile *</label>
-          <input
-            type="text"
-            name="customer_mobile"
-            placeholder="e.g. 604-123-4567"
-            required
-          />
-        </div>
-
-        <div class="form-section-title">2. Pickup Details</div>
-
-        <div class="form-group">
-          <label>Pickup Date *</label>
-          <input type="date" id="pickup_date" name="pickup_date" required />
-          <div class="notice">
-            Available everyday. Special hours apply on Mondays and Tuesdays.
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Pickup Time *</label>
-          <select id="pickup_time" name="pickup_time" required disabled>
-            <option value="">Please select a valid pickup date first</option>
-          </select>
-        </div>
-
-        <div class="form-section-title">3. Cake Specifications</div>
-
-        <div class="form-group">
-          <label>Cake Shape *</label>
-          <select name="cake_shape" required>
-            <option value="" disabled selected>Please select a shape</option>
-            <option value="Round">Round</option>
-            <option value="Heart">Heart(+10$)</option>
-            <option value="Custom">Custom(+10$)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Cake Size *</label>
-          <select name="cake_size" required>
-            <option value="" disabled selected>Please select a size</option>
-            <option value='Bento (4")'>Bento (4”) serves 1-2</option>
-            <option value='Standard (6")'>Standard (6”) serves 6-8</option>
-            <option value='Large (8")'>Large (8”) serves 10-12</option>
-            <option value='Big Celebration (4" + 6")'>
-              Big Celebration (4” + 6”) serves 10-12
-            </option>
-            <option value='Big Celebration (6" + 8")'>
-              Big Celebration (6” + 8”) serves 24-26
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Cake Flavour *</label>
-          <select name="cake_flavour" required>
-            <option value="" disabled selected>Please select a flavour</option>
-            <option value="Classic Vanilla">Classic Vanilla</option>
-            <option value="Chocolate Hazelnut">Chocolate Hazelnut</option>
-            <option value="Strawberry Shortcake">Strawberry Shortcake</option>
-            <option value="Red Velvet">Red Velvet</option>
-          </select>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 8px;">
-          <label>Cake Add-ons</label>
-          <div class="notice">
-            Select any extras you would like to include. Final pricing will be
-            confirmed in your custom quote.
-          </div>
-        </div>
-
-        <div
-          class="form-group terms-group vertical-addons"
-          style="margin-top: 5px;"
-        >
-          <label
-            ><input type="checkbox" name="addons" value="Custom message (2-5$)" />
-            Custom message ($2-$5)</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="addons"
-              value="Vintage piping (5-15$)"
+          <div class="form-group">
+            <label for="customer_name">Your Name *</label>
+            <input
+              type="text"
+              id="customer_name"
+              name="customer_name"
+              placeholder="e.g. Jane Doe"
+              required
             />
-            Vintage piping ($5-$15)</label
-          >
-          <label
-            ><input type="checkbox" name="addons" value="Sugar pearls (5-10$)" />
-            Sugar pearls ($5-$10)</label
-          >
-          <label
-            ><input type="checkbox" name="addons" value="Ribbons (2-5$)" />
-            Ribbons ($2-$5)</label
-          >
-          <label
-            ><input type="checkbox" name="addons" value="Glitter top (3$)" />
-            Glitter top ($3)</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="addons"
-              value="Maraschino Cherries (2$/ea)"
+          </div>
+
+          <div class="form-group">
+            <label for="customer_email">Email *</label>
+            <input
+              type="email"
+              id="customer_email"
+              name="customer_email"
+              placeholder="e.g. email@domain.com"
+              required
             />
-            Maraschino Cherries ($2/ea)</label
-          >
-          <label
-            ><input type="checkbox" name="addons" value="Butterflies (5$)" />
-            Butterflies ($5)</label
-          >
-          <label
-            ><input type="checkbox" name="addons" value="2D design (5-10$)" />
-            2D design ($5-$10)</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="addons"
-              value="3D character (8-10$)"
+          </div>
+
+          <div class="form-group">
+            <label for="customer_mobile">Mobile *</label>
+            <input
+              type="tel"
+              id="customer_mobile"
+              name="customer_mobile"
+              placeholder="e.g. 604-123-4567"
+              required
             />
-            3D character ($8-$10)</label
-          >
-          <label
-            ><input
-              type="checkbox"
-              name="addons"
-              value="Disco ball (10$ for 3)"
+          </div>
+        </section>
+
+        <!-- ==========================================
+             2. PICKUP DETAILS
+        =========================================== -->
+        <section>
+          <h2 class="form-section-title">2. Pickup Details</h2>
+
+          <div class="form-group">
+            <label for="pickup_date">Pickup Date *</label>
+            <input type="date" id="pickup_date" name="pickup_date" required />
+            <p class="notice">
+              Available everyday. Special hours apply on Mondays and Tuesdays.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label for="pickup_time">Pickup Time *</label>
+            <select id="pickup_time" name="pickup_time" required disabled>
+              <option value="">Please select a valid pickup date first</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             3. CAKE SPECIFICATIONS
+        =========================================== -->
+        <section>
+          <h2 class="form-section-title">3. Cake Specifications</h2>
+
+          <div class="form-group">
+            <label for="cake_shape">Cake Shape *</label>
+            <select id="cake_shape" name="cake_shape" required>
+              <option value="" disabled selected>Please select a shape</option>
+              <option value="Round">Round</option>
+              <option value="Heart">Heart (+$10)</option>
+              <option value="Custom">Custom (+$10)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cake_size">Cake Size *</label>
+            <select id="cake_size" name="cake_size" required>
+              <option value="" disabled selected>Please select a size</option>
+              <option value='Bento (4")'>Bento (4”) serves 1–2</option>
+              <option value='Standard (6")'>Standard (6”) serves 6–8</option>
+              <option value='Large (8")'>Large (8”) serves 10–12</option>
+              <option value='Big Celebration (4" + 6")'>
+                Big Celebration (4” + 6”) serves 10–12
+              </option>
+              <option value='Big Celebration (6" + 8")'>
+                Big Celebration (6” + 8”) serves 24–26
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="cake_flavour">Cake Flavour *</label>
+            <select id="cake_flavour" name="cake_flavour" required>
+              <option value="" disabled selected>Please select a flavour</option>
+              <option value="Classic Vanilla">Classic Vanilla</option>
+              <option value="Chocolate Hazelnut">Chocolate Hazelnut</option>
+              <option value="Strawberry Shortcake">Strawberry Shortcake</option>
+              <option value="Red Velvet">Red Velvet</option>
+            </select>
+          </div>
+
+          <!-- Cake Add-ons -->
+          <div class="form-group compact-bottom">
+            <label>Cake Add-ons</label>
+            <p class="notice">
+              Select any extras you would like to include. Final pricing will be
+              confirmed in your custom quote.
+            </p>
+          </div>
+
+          <div class="form-group terms-group vertical-addons compact-top">
+            <label>
+              <input type="checkbox" name="addons" value="Custom message (2-5$)" />
+              Custom message ($2–$5)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Vintage piping (5-15$)" />
+              Vintage piping ($5–$15)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Sugar pearls (5-10$)" />
+              Sugar pearls ($5–$10)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Ribbons (2-5$)" />
+              Ribbons ($2–$5)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Glitter top (3$)" />
+              Glitter top ($3)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Maraschino Cherries (2$/ea)" />
+              Maraschino Cherries ($2/ea)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Butterflies (5$)" />
+              Butterflies ($5)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="2D design (5-10$)" />
+              2D design ($5–$10)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="3D character (8-10$)" />
+              3D character ($8–$10)
+            </label>
+            <label>
+              <input type="checkbox" name="addons" value="Disco ball (10$ for 3)" />
+              Disco ball ($10 for 3)
+            </label>
+          </div>
+
+          <!-- Candle Add-ons (Populated by script.js) -->
+          <div class="form-group compact-bottom">
+            <label>Candle Add-ons</label>
+            <p class="notice">
+              Select a candle type to specify your quantity. Pictures are shown
+              below for reference.
+            </p>
+          </div>
+
+          <div id="candle-gallery" class="candle-gallery-box"></div>
+          <div id="candle-checklist" class="form-group terms-group vertical-addons"></div>
+
+          <div class="form-group">
+            <label for="diet_notes">Dietary Restrictions / Allergies</label>
+            <input
+              type="text"
+              id="diet_notes"
+              name="diet_notes"
+              placeholder="e.g. Nut allergy, gluten free..."
             />
-            Disco ball ($10 for 3)</label
-          >
-        </div>
-
-        <div class="form-group" style="margin-bottom: 8px;">
-          <label>Candle Add-ons</label>
-          <div class="notice">
-            Select a candle type to specify your quantity. Pictures are shown
-            below for reference.
           </div>
-        </div>
+        </section>
 
-        <div id="candle-gallery" class="candle-gallery-box"></div>
-        <div id="candle-checklist" class="form-group terms-group vertical-addons"></div>
+        <!-- ==========================================
+             4. DESIGN & INSPIRATION
+        =========================================== -->
+        <section>
+          <h2 class="form-section-title">4. Design &amp; Inspiration</h2>
 
-        <div class="form-group">
-          <label>Dietary Restrictions / Allergies</label>
-          <input
-            type="text"
-            name="diet_notes"
-            placeholder="e.g. Nut allergy, gluten free..."
-          />
-        </div>
-
-        <div class="form-section-title">4. Design & Inspiration</div>
-
-        <div class="form-group">
-          <label>Special Message / Design Description</label>
-          <textarea
-            name="design_message_notes"
-            placeholder="Describe writing on cake, color theme, design details..."
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Inspo Pictures (Optional)</label>
-          <div class="notice" style="margin-bottom: 10px;">
-            Feel free to send us your inspo pics, but please be advised we do
-            not copy other baker's design and we'll use the inspo pic sent as
-            reference to craft a one-of-a-kind cake for you in our style
-          </div>
-          <div class="file-input-wrapper">
-            <input type="file" name="inspo_photos" multiple accept="image/*" />
-          </div>
-          <div class="notice">You can upload up to 3 reference photos</div>
-        </div>
-
-        <div class="form-group">
-          <label>Preferred Payment Method</label>
-          <select name="payment_method">
-            <option value="" disabled selected>
-              Please select a payment method
-            </option>
-            <option value="E-Transfer">E-Transfer</option>
-            <option value="Cash">Cash</option>
-          </select>
-        </div>
-
-        <div class="form-section-title">5. Terms & Conditions</div>
-
-        <div class="terms-info-box">
-          <div class="terms-category">
-            <h4>cake design</h4>
-            <p>each cake made are one-of-a kind and customized to your order :) Pricing <u><strong>will vary</strong></u> based on size, design, and special requests</p>
+          <div class="form-group">
+            <label for="design_message_notes">Special Message / Design Description</label>
+            <textarea
+              id="design_message_notes"
+              name="design_message_notes"
+              placeholder="Describe writing on cake, color theme, design details..."
+            ></textarea>
           </div>
 
-          <div class="terms-category">
-            <h4>order date</h4>
-            <p>cakes must be ordered and confirmed (50% deposit) at least 3 days in advance. if less than 3 days then there is a "urgent fee" applied to your final order</p>
+          <div class="form-group">
+            <label for="inspo_photos">Inspo Pictures (Optional)</label>
+            <p class="notice notice-spaced">
+              Feel free to send us your inspo pics, but please be advised we do
+              not copy other baker's design and we'll use the inspo pic sent as
+              reference to craft a one-of-a-kind cake for you in our style.
+            </p>
+            <div class="file-input-wrapper">
+              <input
+                type="file"
+                id="inspo_photos"
+                name="inspo_photos"
+                multiple
+                accept="image/*"
+              />
+            </div>
+            <p class="notice">You can upload up to 3 reference photos</p>
           </div>
 
-          <div class="terms-category">
-            <h4>design change</h4>
-            <p>once an order is confirmed, no changes can be applied</p>
+          <div class="form-group">
+            <label for="payment_method">Preferred Payment Method</label>
+            <select id="payment_method" name="payment_method">
+              <option value="" disabled selected>
+                Please select a payment method
+              </option>
+              <option value="E-Transfer">E-Transfer</option>
+              <option value="Cash">Cash</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             5. TERMS & CONDITIONS
+        =========================================== -->
+        <section>
+          <h2 class="form-section-title">5. Terms &amp; Conditions</h2>
+
+          <div class="terms-info-box">
+            <div class="terms-category">
+              <h4>cake design</h4>
+              <p>
+                each cake made are one-of-a kind and customized to your order :)
+                Pricing <u><strong>will vary</strong></u> based on size, design,
+                and special requests
+              </p>
+            </div>
+
+            <div class="terms-category">
+              <h4>order date</h4>
+              <p>
+                cakes must be ordered and confirmed (50% deposit) at least 3 days
+                in advance. if less than 3 days then there is a "urgent fee"
+                applied to your final order
+              </p>
+            </div>
+
+            <div class="terms-category">
+              <h4>design change</h4>
+              <p>once an order is confirmed, no changes can be applied</p>
+            </div>
+
+            <div class="terms-category">
+              <h4>payment</h4>
+              <p>
+                a full payment or 50% deposit (<u><strong>non-refundable</strong></u>)
+                is needed via e-transfer to secure your order. the remaining 50% is
+                due on the pickup day
+              </p>
+            </div>
+
+            <div class="terms-category">
+              <h4>cancellation</h4>
+              <p>
+                order cancellations must be confirmed at least 3 days in advance
+                to your pickup date
+              </p>
+            </div>
+
+            <div class="terms-category">
+              <h4>delivery</h4>
+              <p>
+                unfortunately delivery is not offered. pick up only<br />
+                location : by joyce station or off grandview highway
+              </p>
+            </div>
+
+            <div class="terms-category">
+              <h4>allergens</h4>
+              <p>
+                our cakes are crafted in a home-based kitchen where various
+                allergens may be present. thus, we cannot assure the complete
+                absence of all potential allergens in your order
+              </p>
+            </div>
           </div>
 
-          <div class="terms-category">
-            <h4>payment</h4>
-            <p>a full payment or 50% deposit (non-refundable) is needed via e-transfer to secure your order. the remaining 50% is due on the pickup day</p>
+          <div class="form-group terms-group">
+            <input
+              type="checkbox"
+              id="terms_consent"
+              name="terms_consent"
+              required
+            />
+            <label for="terms_consent">
+              I understand and consent to the above terms &amp; conditions.
+            </label>
           </div>
-
-          <div class="terms-category">
-            <h4>cancellation</h4>
-            <p>order cancellations must be confirmed at least 3 days in advance to your pickup date</p>
-          </div>
-
-          <div class="terms-category">
-            <h4>delivery</h4>
-            <p>unfortunately delivery is not offered. pick up only<br>location : by joyce station or off grandview highway</p>
-          </div>
-
-          <div class="terms-category">
-            <h4>allergens</h4>
-            <p>our cakes are crafted in a home-based kitchen where various allergens may be present. thus, we cannot assure the complete absence of all potential allergens in your order</p>
-          </div>
-        </div>
-
-        <div class="form-group terms-group">
-          <input type="checkbox" id="terms_consent" name="terms_consent" required>
-          <label for="terms_consent">
-            I understand and consent to the above terms & conditions.
-          </label>
-        </div>
+        </section>
 
         <div class="deposit-warning">
           Please give up to 48 hours for CakeKue admin to respond, thank you for
@@ -280,6 +326,6 @@
 
         <button type="submit">Submit Inquiry</button>
       </form>
-    </div>
+    </main>
   </body>
 </html>

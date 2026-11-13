@@ -1,11 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap');
 
+/* ==========================================
+   1. DESIGN TOKENS & BASE RESET
+========================================== */
 :root {
-    --brand-pink: #fec5e5;       
-    --brand-pink-dark: #e34a8a;  
-    --brand-pink-light: #fff1fa; 
-    --text-dark: #4a4a4a;        
+    --brand-pink: #fec5e5;
+    --brand-pink-dark: #e34a8a;
+    --brand-pink-light: #fff1fa;
+    --brand-accent: #d63384;
+    --border-pink: #f8c8dc;
+    --border-input: #f3e8ee;
+    --text-dark: #4a4a4a;
+    --text-muted: #888888;
     --border-radius: 16px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 body {
@@ -18,6 +31,9 @@ body {
     justify-content: center;
 }
 
+/* ==========================================
+   2. CONTAINER & HEADER
+========================================== */
 .portal-container {
     background: #ffffff;
     width: 100%;
@@ -25,7 +41,6 @@ body {
     border-radius: var(--border-radius);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     padding: 35px;
-    box-sizing: border-box;
 }
 
 .header-section {
@@ -43,9 +58,9 @@ body {
 
 .brand-subtitle {
     font-size: 18px;
-    color: #888;
+    color: var(--text-muted);
     letter-spacing: 1px;
-    margin-bottom: 10px;
+    margin: 0 0 10px 0;
 }
 
 .form-section-title {
@@ -54,12 +69,22 @@ body {
     font-size: 20px;
     border-bottom: 2px dashed #ffe4e1;
     padding-bottom: 6px;
-    margin-top: 25px;
-    margin-bottom: 15px;
+    margin: 28px 0 15px 0;
 }
 
+/* ==========================================
+   3. FORM CONTROLS & TYPOGRAPHY
+========================================== */
 .form-group {
     margin-bottom: 18px;
+}
+
+.form-group.compact-bottom {
+    margin-bottom: 8px;
+}
+
+.form-group.compact-top {
+    margin-top: 5px;
 }
 
 label {
@@ -70,23 +95,26 @@ label {
 }
 
 input[type="text"],
+input[type="email"],
+input[type="tel"],
 input[type="date"],
 input[type="number"],
 select,
 textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 2px solid #f3e8ee;
+    border: 2px solid var(--border-input);
     border-radius: 12px;
     font-family: 'Nunito', sans-serif;
     font-size: 14px;
     color: var(--text-dark);
     background-color: #faf8fa;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
 input[type="date"]:focus,
 input[type="number"]:focus,
 select:focus,
@@ -111,47 +139,23 @@ textarea {
 
 .notice {
     font-size: 12px;
-    color: #888;
-    margin-top: 4px;
+    color: var(--text-muted);
+    margin: 4px 0 0 0;
 }
 
-.deposit-warning {
-    font-size: 13px;
-    color: #d63384;
-    font-weight: 700;
-    margin: 25px 0 15px 0;
-    text-align: center;
-    background: var(--brand-pink-light);
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px dashed #f8c8dc;
+.notice-spaced {
+    margin-bottom: 10px;
 }
 
-button[type="submit"] {
-    background: var(--brand-pink-dark);
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    width: 100%;
-    font-family: 'Fredoka', cursive;
-    font-size: 18px;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(240, 128, 128, 0.3);
-    transition: transform 0.1s ease, background 0.2s ease;
-}
-
-button[type="submit"]:hover {
-    background: #e06666;
-    transform: translateY(-1px);
-}
-
+/* ==========================================
+   4. CHECKLISTS & ADD-ON BOXES
+========================================== */
 .terms-group {
     display: flex;
     align-items: flex-start;
     gap: 12px;
     background: var(--brand-pink-light);
-    border: 1px dashed #f8c8dc;
+    border: 1px dashed var(--border-pink);
     padding: 14px;
     border-radius: 10px;
     margin: 25px 0 15px 0;
@@ -168,41 +172,41 @@ button[type="submit"]:hover {
 .terms-group label {
     font-size: 13px;
     font-weight: 700;
-    color: #d63384;
+    color: var(--brand-accent);
     cursor: pointer;
     line-height: 1.4;
     margin-bottom: 0;
 }
 
 .terms-group.vertical-addons {
-    display: flex;
     flex-direction: column;
-    gap: 10px; 
+    gap: 10px;
 }
 
 .terms-group.vertical-addons label {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-weight: normal;
-    cursor: pointer;
-    font-size: 0.85rem; 
-    color: #d63384;
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--brand-accent);
     margin-bottom: 0;
 }
 
 .terms-group.vertical-addons input[type="checkbox"] {
-    transform: scale(0.85); 
-    cursor: pointer;
+    margin-top: 0;
+    transform: scale(0.85);
 }
 
-/* 3-Column Window pane gallery for candle photos */
+/* ==========================================
+   5. CANDLE GALLERY & INVENTORY STATES
+========================================== */
 .candle-gallery-box {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     background: var(--brand-pink-light);
-    border: 1px dashed #f8c8dc;
+    border: 1px dashed var(--border-pink);
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 15px;
@@ -211,7 +215,7 @@ button[type="submit"]:hover {
 .candle-pane {
     text-align: center;
     background: #ffffff;
-    border: 1px solid #f3e8ee;
+    border: 1px solid var(--border-input);
     border-radius: 10px;
     padding: 10px;
 }
@@ -233,13 +237,11 @@ button[type="submit"]:hover {
 
 .candle-qty-container {
     background: #ffffff;
-    border: 1px solid #f8c8dc;
+    border: 1px solid var(--border-pink);
     padding: 12px;
     border-radius: 10px;
-    margin-top: 4px;
-    margin-bottom: 8px;
+    margin: 4px 0 8px 0;
     width: 100%;
-    box-sizing: border-box;
 }
 
 .candle-qty-container label {
@@ -249,7 +251,7 @@ button[type="submit"]:hover {
     font-weight: 700;
 }
 
-/* Grayscale effect for out-of-stock gallery items */
+/* Out-of-Stock Styling */
 .candle-pane.out-of-stock img {
     filter: grayscale(100%);
     opacity: 0.5;
@@ -260,7 +262,6 @@ button[type="submit"]:hover {
     text-decoration: line-through;
 }
 
-/* Disabled styling for out-of-stock checklist item */
 .candle-check-label.disabled-label {
     color: #b0b0b0 !important;
     cursor: not-allowed !important;
@@ -271,10 +272,12 @@ button[type="submit"]:hover {
     cursor: not-allowed;
 }
 
-/* Terms & Conditions Info Box Styling */
+/* ==========================================
+   6. TERMS & CONDITIONS BOX & SUBMIT BUTTON
+========================================== */
 .terms-info-box {
     background: var(--brand-pink-light);
-    border: 1px dashed #f8c8dc;
+    border: 1px dashed var(--border-pink);
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 18px;
@@ -307,4 +310,49 @@ button[type="submit"]:hover {
     color: var(--text-dark);
     margin: 0;
     line-height: 1.4;
+}
+
+.deposit-warning {
+    font-size: 13px;
+    color: var(--brand-accent);
+    font-weight: 700;
+    margin: 25px 0 15px 0;
+    text-align: center;
+    background: var(--brand-pink-light);
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px dashed var(--border-pink);
+}
+
+button[type="submit"] {
+    background: var(--brand-pink-dark);
+    color: #ffffff;
+    border: none;
+    padding: 15px 20px;
+    width: 100%;
+    font-family: 'Fredoka', cursive;
+    font-size: 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(240, 128, 128, 0.3);
+    transition: transform 0.1s ease, background-color 0.2s ease;
+}
+
+button[type="submit"]:hover {
+    background: #e06666;
+    transform: translateY(-1px);
+}
+
+/* ==========================================
+   7. RESPONSIVE ADJUSTMENTS
+========================================== */
+@media (max-width: 540px) {
+    .portal-container {
+        padding: 24px 18px;
+    }
+
+    .candle-gallery-box {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
 }
