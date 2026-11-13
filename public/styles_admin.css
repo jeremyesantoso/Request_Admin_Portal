@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap');
+
+:root {
+    --brand-pink: #fec5e5;
+    --brand-pink-dark: #e34a8a;
+    --brand-pink-light: #fff1fa;
+    --brand-accent: #d63384;
+    --border-pink: #f8c8dc;
+    --border-input: #f3e8ee;
+    --text-dark: #333333;
+    --text-muted: #777777;
+    --bg-workspace: #f8f9fa;
+    --border-radius: 14px;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: var(--bg-workspace);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 30px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.admin-workspace {
+    width: 100%;
+    max-width: 1100px;
+    background: #ffffff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 40px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed var(--border-pink);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.admin-title-group h1 {
+    font-family: 'Fredoka', cursive;
+    color: var(--brand-pink-dark);
+    font-size: 32px;
+    margin: 0 0 4px 0;
+}
+
+.admin-title-group p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* Order Card Styling */
+.order-card {
+    background: #ffffff;
+    border: 1px solid var(--border-input);
+    border-left: 5px solid var(--brand-pink-dark);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border-input);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.order-header h3 {
+    font-family: 'Fredoka', cursive;
+    color: var(--text-dark);
+    font-size: 18px;
+    margin: 0;
+}
+
+.badge {
+    background: var(--brand-pink-light);
+    color: var(--brand-accent);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.order-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.order-grid div strong {
+    color: var(--text-muted);
+}
+
+.order-notes-box {
+    background: var(--brand-pink-light);
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    border: 1px dashed var(--border-pink);
+}
+
+.photo-preview-box {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.photo-preview-box img {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border-input);
+    transition: transform 0.15s ease;
+}
+
+.photo-preview-box img:hover {
+    transform: scale(1.05);
+}
+
+.admin-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-input);
+    align-items: center;
+}
+
+.admin-actions input,
+.admin-actions select {
+    padding: 10px 12px;
+    border: 2px solid var(--border-input);
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+
+.admin-actions input:focus,
+.admin-actions select:focus {
+    border-color: var(--brand-pink-dark);
+}
+
+.btn-primary {
+    background: var(--brand-pink-dark);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Fredoka', cursive;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #cf3775;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px;
+    font-size: 16px;
+}

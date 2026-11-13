@@ -219,4 +219,26 @@ router.get('/orders', async (req, res) => {
     }
 });
 
+// PATCH /api/orders/:id/status - Update order price quote and status (Admin Action)
+router.patch('/orders/:id/status', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { total_price, status } = req.body;
+
+        const [result] = await db.query(
+            `UPDATE ORDERS SET TOTAL_PRICE = ?, STATUS = ? WHERE ID = ?`,
+            [total_price || 0.00, status, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        res.json({ message: 'Order updated successfully!' });
+    } catch (error) {
+        console.error('Error updating order:', error);
+        res.status(500).json({ error: 'Failed to update order status and price' });
+    }
+});
+
 module.exports = router;
