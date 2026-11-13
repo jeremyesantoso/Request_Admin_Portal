@@ -25,7 +25,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // POST /api/orders - Submit a new cake inquiry
-router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
+router.post('/orders', upload.array('inspo_photos', 3), async (req, res) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
@@ -39,14 +39,20 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             cake_shape,
             cake_size,
             cake_flavour,
-            candle_option,
+            candle_types,
+            std1_quantity,
+            std2_quantity,
+            std3_quantity,
+            std4_quantity,
+            std5_quantity,
+            prem_quantity,
             diet_notes,
             design_message_notes,
             payment_method,
             addons 
         } = req.body;
 
-        // Make daily capacity limit of 4 orders a day
+        // Enforce daily capacity limit of 4 orders a day
         const [dailyOrders] = await connection.query(
             `SELECT COUNT(*) AS total FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
             [pickup_date]
@@ -68,10 +74,28 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
             return res.status(400).json({ error: 'This pickup date and time slot is already booked. Please choose another time.' });
         }
 
-        // Format checkboxes into a clean comma-separated string (or 'None' if none selected)
+        // Format cake add-on checkboxes into a clean comma-separated string
         const formattedAddons = Array.isArray(addons) 
             ? addons.join(', ') 
             : (addons || 'None');
+
+        // Map candle labels to their corresponding quantity fields
+        const candleQtyMap = {
+            'Standard 1': std1_quantity,
+            'Standard 2': std2_quantity,
+            'Standard 3': std3_quantity,
+            'Standard 4': std4_quantity,
+            'Standard 5': std5_quantity,
+            'Premium': prem_quantity
+        };
+
+        let formattedCandles = 'None';
+        if (candle_types) {
+            const selectedTypes = Array.isArray(candle_types) ? candle_types : [candle_types];
+            formattedCandles = selectedTypes
+                .map(type => `${type} (x${candleQtyMap[type] || 1})`)
+                .join(', ');
+        }
 
         // Insert into ORDERS table 
         const [orderResult] = await connection.query(
@@ -82,11 +106,11 @@ router.post('/orders', upload.array('inspo_photos', 5), async (req, res) => {
 
         const orderId = orderResult.insertId;
 
-        // Insert into CAKE_SPECS (including formattedAddons)
+        // Insert into CAKE_SPECS 
         await connection.query(
             `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES, ADDONS) 
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [orderId, cake_shape, cake_size, cake_flavour, candle_option || 'None', diet_notes || 'None', design_message_notes || '', formattedAddons]
+            [orderId, cake_shape, cake_size, cake_flavour, formattedCandles, diet_notes || 'None', design_message_notes || '', formattedAddons]
         );
 
         // Insert Cloudinary secure URLs into INSPO_PICS table if photos were uploaded
@@ -172,7 +196,7 @@ router.get('/orders', async (req, res) => {
                 cs.CANDLE_OPTION,
                 cs.DIET_NOTES,
                 cs.DESIGN_MESSAGE_NOTES,
-                cs.ADDONS, -- <--- INCLUDE ADDONS IN ADMIN QUERY
+                cs.ADDONS,
                 GROUP_CONCAT(ip.PHOTO_URL) AS inspo_photos
             FROM ORDERS o
             LEFT JOIN CAKE_SPECS cs ON o.ID = cs.ORDER_ID

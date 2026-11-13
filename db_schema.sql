@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS CAKE_SPECS (
         'Strawberry Shortcake', 
         'Red Velvet'
     ) NOT NULL,
-    CANDLE_OPTION ENUM('None', 'Standard (+$1)', 'Premium (+$3)') DEFAULT 'None',
+    CANDLE_OPTION VARCHAR(255) DEFAULT 'None',
     DIET_NOTES VARCHAR(255) DEFAULT 'None',
     DESIGN_MESSAGE_NOTES TEXT,
     ADDONS TEXT,
