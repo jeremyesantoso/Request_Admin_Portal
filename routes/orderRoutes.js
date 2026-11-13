@@ -24,8 +24,15 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-// POST /api/orders - Submit a new cake inquiry
-router.post('/orders', upload.array('inspo_photos', 3), async (req, res) => {
+// POST /api/orders - Submit a new cake inquiry (with Multer error catcher)
+router.post('/orders', (req, res, next) => {
+    upload.array('inspo_photos', 3)(req, res, (err) => {
+        if (err) {
+            return res.status(400).json({ error: 'You can only upload up to 3 reference photos.' });
+        }
+        next();
+    });
+}, async (req, res) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
@@ -106,7 +113,7 @@ router.post('/orders', upload.array('inspo_photos', 3), async (req, res) => {
 
         const orderId = orderResult.insertId;
 
-        // Insert into CAKE_SPECS 
+        // Insert into CAKE_SPECS
         await connection.query(
             `INSERT INTO CAKE_SPECS (ORDER_ID, CAKE_SHAPE, CAKE_SIZE, CAKE_FLAVOUR, CANDLE_OPTION, DIET_NOTES, DESIGN_MESSAGE_NOTES, ADDONS) 
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
