@@ -212,11 +212,9 @@ router.get('/orders', adminAuth, async (req, res) => {
                 cs.DIET_NOTES,
                 cs.DESIGN_MESSAGE_NOTES,
                 cs.ADDONS,
-                GROUP_CONCAT(ip.PHOTO_URL) AS inspo_photos
+                (SELECT GROUP_CONCAT(PHOTO_URL) FROM INSPO_PICS WHERE ORDER_ID = o.ID) AS inspo_photos
             FROM ORDERS o
             LEFT JOIN CAKE_SPECS cs ON o.ID = cs.ORDER_ID
-            LEFT JOIN INSPO_PICS ip ON o.ID = ip.ORDER_ID
-            GROUP BY o.ID
             ORDER BY o.CREATED_AT DESC
         `;
         const [orders] = await db.query(query);
