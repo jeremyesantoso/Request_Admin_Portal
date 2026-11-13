@@ -177,7 +177,8 @@ body {
 }
 
 .btn-primary:hover {
-    background: #cf3775;
+    background: #e06666;
+    transform: translateY(-1px);
 }
 
 .empty-state {

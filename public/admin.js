@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             } else {
                 const span = document.createElement('span');
                 span.className = 'no-photos-text';
-                span.textContent = 'No reference photos uploaded.';
+                span.textContent = 'No reference photos uploaded';
                 photoContainer.appendChild(span);
             }
 
