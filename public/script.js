@@ -172,6 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Submitting Order...';
 
+        // Validate photo count (Max 3)
+        const photoInput = document.getElementById('inspo_photos');
+        if (photoInput && photoInput.files.length > 3) {
+            alert('You can only upload up to 3 reference photos.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+            return;
+        }
+
         const formData = new FormData(form);
 
         try {
