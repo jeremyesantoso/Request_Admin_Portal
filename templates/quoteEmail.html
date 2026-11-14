@@ -1,0 +1,29 @@
+<div style="font-family: 'Nunito', Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f8c8dc; border-radius: 12px; padding: 24px; color: #333;">
+    <h2 style="color: #e34a8a; margin-top: 0;">cakekue &bull; Order Quote #{{order_id}}</h2>
+    <p>Hi <strong>{{customer_name}}</strong>,</p>
+    <p>Thank you for your custom cake inquiry! Here is your finalized quote and order summary:</p>
+    
+    <div style="background: #fff1fa; border: 1px dashed #f8c8dc; border-radius: 8px; padding: 16px; margin: 20px 0;">
+        <p style="margin: 4px 0;"><strong>Pickup Date & Time:</strong> {{formatted_date}} at {{pickup_time}}</p>
+        <p style="margin: 4px 0;"><strong>Shape & Size:</strong> {{cake_shape}}, {{cake_size}}</p>
+        <p style="margin: 4px 0;"><strong>Flavour:</strong> {{cake_flavour}}</p>
+        <p style="margin: 4px 0;"><strong>Candles:</strong> {{candle_option}}</p>
+        <p style="margin: 4px 0;"><strong>Add-ons:</strong> {{addons}}</p>
+        <p style="margin: 4px 0;"><strong>Design Notes:</strong> {{design_notes}}</p>
+        <p style="margin: 4px 0;"><strong>Dietary Notes:</strong> {{diet_notes}}</p>
+    </div>
+
+    <div style="border-top: 1px solid #f3e8ee; padding-top: 16px; margin-bottom: 20px;">
+        <p style="font-size: 16px; margin: 4px 0;"><strong>Total Quote:</strong> ${{total_price}}</p>
+        <p style="font-size: 18px; color: #d63384; margin: 4px 0;"><strong>50% Non-Refundable Deposit Due:</strong> ${{deposit_amount}}</p>
+    </div>
+
+    <h3 style="color: #e34a8a; font-size: 16px;">How to Confirm Your Order:</h3>
+    <ol style="line-height: 1.6; padding-left: 20px;">
+        <li>Send an Interac E-Transfer of <strong>${{deposit_amount}}</strong> to <strong>{{etransfer_email}}</strong>.</li>
+        <li>Include <strong>Order #{{order_id}}</strong> in the transfer message.</li>
+        <li><strong>Reply directly to this email with a screenshot of your transfer receipt</strong> so we can verify your deposit and lock in your pickup slot!</li>
+    </ol>
+
+    <p style="font-size: 12px; color: #777; margin-top: 24px;">Note: Your pickup date and time are not guaranteed until the 50% deposit screenshot is received and verified.</p>
+</div>

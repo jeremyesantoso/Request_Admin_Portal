@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusSelect.value = order.STATUS;
 
             const saveBtn = clone.querySelector('.save-btn');
+            saveBtn.id = `saveBtn_${order.order_id}`; // Added dynamic ID for targeting
             saveBtn.addEventListener('click', () => updateOrder(order.order_id));
 
             container.appendChild(clone);
@@ -82,13 +83,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Function to handle saving price quote and status updates
+// Function to handle saving price quote and status updates with duplicate click protection
 async function updateOrder(orderId) {
+    const saveBtn = document.getElementById(`saveBtn_${orderId}`);
     const priceInput = document.getElementById(`price_${orderId}`);
     const statusSelect = document.getElementById(`status_${orderId}`);
     
     const finalPrice = priceInput.value;
     const newStatus = statusSelect.value;
+
+    // Disable button and update text immediately to prevent duplicate clicks
+    saveBtn.disabled = true;
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = 'Saving...';
 
     try {
         const response = await fetch(`/api/orders/${orderId}/status`, {
@@ -107,5 +114,9 @@ async function updateOrder(orderId) {
     } catch (err) {
         console.error(err);
         alert('Network error while updating order.');
+    } finally {
+        // Always re-enable button and restore text when request completes
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
     }
 }
