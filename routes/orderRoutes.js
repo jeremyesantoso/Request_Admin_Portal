@@ -58,7 +58,9 @@ router.post('/orders', (req, res, next) => {
             diet_notes,
             design_message_notes,
             payment_method,
-            addons 
+            addons,
+            custom_message_text,
+            custom_addon_text
         } = req.body;
 
         // Validate that a payment method was selected
@@ -89,10 +91,21 @@ router.post('/orders', (req, res, next) => {
             return res.status(400).json({ error: 'This pickup date and time slot is already booked. Please choose another time.' });
         }
 
-        // Format cake add-on checkboxes into a clean comma-separated string
-        const formattedAddons = Array.isArray(addons) 
-            ? addons.join(', ') 
-            : (addons || 'None');
+        // Format cake add-on checkboxes + attach any custom specifications inline
+        let formattedAddons = 'None';
+        if (addons) {
+            const addonList = Array.isArray(addons) ? addons : [addons];
+            const enrichedAddons = addonList.map(item => {
+                if (item === 'Custom message (2-5$)' && custom_message_text && custom_message_text.trim() !== '') {
+                    return `Custom message (2-5$): "${custom_message_text.trim()}"`;
+                }
+                if (item === 'Custom add-ons' && custom_addon_text && custom_addon_text.trim() !== '') {
+                    return `Custom add-ons: "${custom_addon_text.trim()}"`;
+                }
+                return item;
+            });
+            formattedAddons = enrichedAddons.join(', ');
+        }
 
         // Map candle labels to their corresponding quantity fields
         const candleQtyMap = {

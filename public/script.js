@@ -18,6 +18,45 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = form.querySelector('button[type="submit"]');
 
     // ==========================================
+    // 0. CONDITIONAL CUSTOM ADD-ON INPUTS
+    // ==========================================
+    const customMsgCheckbox = document.getElementById('custom_msg_cb');
+    const customMsgContainer = document.getElementById('custom_msg_container');
+    const customMsgInput = document.getElementById('custom_message_text');
+
+    if (customMsgCheckbox && customMsgContainer && customMsgInput) {
+        customMsgCheckbox.addEventListener('change', () => {
+            if (customMsgCheckbox.checked) {
+                customMsgContainer.style.display = 'block';
+                customMsgInput.required = true;
+                customMsgInput.focus();
+            } else {
+                customMsgContainer.style.display = 'none';
+                customMsgInput.required = false;
+                customMsgInput.value = '';
+            }
+        });
+    }
+
+    const customAddonCheckbox = document.getElementById('custom_addon_cb');
+    const customAddonContainer = document.getElementById('custom_addon_container');
+    const customAddonInput = document.getElementById('custom_addon_text');
+
+    if (customAddonCheckbox && customAddonContainer && customAddonInput) {
+        customAddonCheckbox.addEventListener('change', () => {
+            if (customAddonCheckbox.checked) {
+                customAddonContainer.style.display = 'block';
+                customAddonInput.required = true;
+                customAddonInput.focus();
+            } else {
+                customAddonContainer.style.display = 'none';
+                customAddonInput.required = false;
+                customAddonInput.value = '';
+            }
+        });
+    }
+
+    // ==========================================
     // 1. BUILD CANDLE GALLERY & CHECKLIST
     // ==========================================
     const galleryContainer = document.getElementById('candle-gallery');
@@ -166,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. FORM SUBMISSION
     // ==========================================
     form.addEventListener('submit', async (e) => {
-        //Check if the browser's native validation fails (e.g., missing required fields)
+        // Check if the browser's native validation fails (e.g., missing required fields)
         if (!form.checkValidity()) {
             form.reportValidity(); 
             return;
@@ -201,9 +240,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.reset();
                 timeSelect.disabled = true;
                 timeSelect.innerHTML = '<option value="">Please select a valid pickup date first</option>';
+                
+                // Hide all conditional containers (candles + custom add-ons)
                 document.querySelectorAll('.candle-qty-container').forEach(el => {
                     el.style.display = 'none';
                 });
+                if (customMsgInput) customMsgInput.required = false;
+                if (customAddonInput) customAddonInput.required = false;
             } else {
                 alert('Error: ' + (result.error || 'Please try again.'));
             }
