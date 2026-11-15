@@ -16,10 +16,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         container.innerHTML = '';
         
         orders.forEach(order => {
-            // Clone the template content cleanly
             const clone = template.content.cloneNode(true);
 
-            // Populate text fields safely
             clone.querySelector('.order-title').textContent = `Order #${order.order_id} • ${order.CUSTOMER_NAME}`;
             
             const badge = clone.querySelector('.order-badge');
@@ -31,11 +29,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             clone.querySelector('.field-pickup').textContent = `${order.PICKUP_DATE.split('T')[0]} at ${order.PICKUP_TIME}`;
             clone.querySelector('.field-config').textContent = `${order.CAKE_SHAPE}, ${order.CAKE_SIZE}`;
             clone.querySelector('.field-flavour').textContent = order.CAKE_FLAVOUR;
-            clone.querySelector('.field-candles').textContent = order.CANDLE_OPTION;
-            clone.querySelector('.field-addons').textContent = order.ADDONS || 'None';
             clone.querySelector('.field-payment').textContent = order.PAYMENT_METHOD;
             clone.querySelector('.field-design-notes').textContent = order.DESIGN_MESSAGE_NOTES || 'None';
             clone.querySelector('.field-diet-notes').textContent = order.DIET_NOTES;
+
+            // Render Candles vertically if multiple exist (split by semicolon ;)
+            const candlesContainer = clone.querySelector('.field-candles');
+            const rawCandles = order.CANDLE_OPTION;
+            if (rawCandles && rawCandles !== 'None') {
+                candlesContainer.innerHTML = '';
+                const candleList = rawCandles.split(';').map(c => c.trim()).filter(Boolean);
+                const ul = document.createElement('ul');
+                ul.className = 'admin-attribute-list';
+                candleList.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    ul.appendChild(li);
+                });
+                candlesContainer.appendChild(ul);
+            } else {
+                candlesContainer.textContent = 'None';
+            }
+
+            // Render Add-ons vertically if multiple exist (split by comma ,)
+            const addonsContainer = clone.querySelector('.field-addons');
+            const rawAddons = order.ADDONS;
+            if (rawAddons && rawAddons !== 'None') {
+                addonsContainer.innerHTML = '';
+                const addonList = rawAddons.split(',').map(a => a.trim()).filter(Boolean);
+                const ul = document.createElement('ul');
+                ul.className = 'admin-attribute-list';
+                addonList.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    ul.appendChild(li);
+                });
+                addonsContainer.appendChild(ul);
+            } else {
+                addonsContainer.textContent = 'None';
+            }
 
             // Handle Photo Previews
             const photoContainer = clone.querySelector('.photo-preview-container');
@@ -62,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 photoContainer.appendChild(span);
             }
 
-            // Setup input IDs and event bindings for inputs/buttons
+            // Setup input IDs and event bindings
             const priceInput = clone.querySelector('.price-input');
             priceInput.id = `price_${order.order_id}`;
             priceInput.value = order.TOTAL_PRICE || '';
@@ -72,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             statusSelect.value = order.STATUS;
 
             const saveBtn = clone.querySelector('.save-btn');
-            saveBtn.id = `saveBtn_${order.order_id}`; // Added dynamic ID for targeting
+            saveBtn.id = `saveBtn_${order.order_id}`;
             saveBtn.addEventListener('click', () => updateOrder(order.order_id));
 
             container.appendChild(clone);
@@ -83,7 +115,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Function to handle saving price quote and status updates with duplicate click protection
 async function updateOrder(orderId) {
     const saveBtn = document.getElementById(`saveBtn_${orderId}`);
     const priceInput = document.getElementById(`price_${orderId}`);
@@ -92,7 +123,6 @@ async function updateOrder(orderId) {
     const finalPrice = priceInput.value;
     const newStatus = statusSelect.value;
 
-    // Disable button and update text immediately to prevent duplicate clicks
     saveBtn.disabled = true;
     const originalText = saveBtn.textContent;
     saveBtn.textContent = 'Saving...';
@@ -115,7 +145,6 @@ async function updateOrder(orderId) {
         console.error(err);
         alert('Network error while updating order.');
     } finally {
-        // Always re-enable button and restore text when request completes
         saveBtn.disabled = false;
         saveBtn.textContent = originalText;
     }

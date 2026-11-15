@@ -272,3 +272,17 @@ body {
         font-size: 14px;
     }
 }
+
+/* Vertical Attribute List Styling */
+.admin-attribute-list {
+    margin: 4px 0 0 0;
+    padding-left: 16px;
+    list-style-type: disc;
+}
+
+.admin-attribute-list li {
+    font-size: 13px;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
