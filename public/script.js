@@ -3,12 +3,12 @@
 // Change inStock to true or false as needed
 // ==========================================
 const candleInventory = [
+    { id: 'prem', label: 'Premium', fullName: 'Premium Candle', price: 3, img: 'images/premium_candle.jpeg', inStock: true },
     { id: 'std1', label: 'Standard 1', fullName: 'Standard Candle 1', price: 1, img: 'images/standard_candle1.jpeg', inStock: true },
     { id: 'std2', label: 'Standard 2', fullName: 'Standard Candle 2', price: 1, img: 'images/standard_candle2.jpeg', inStock: true },
     { id: 'std3', label: 'Standard 3', fullName: 'Standard Candle 3', price: 1, img: 'images/standard_candle3.jpeg', inStock: true },
     { id: 'std4', label: 'Standard 4', fullName: 'Standard Candle 4', price: 1, img: 'images/standard_candle4.jpeg', inStock: false },
-    { id: 'std5', label: 'Standard 5', fullName: 'Standard Candle 5', price: 1, img: 'images/standard_candle5.jpeg', inStock: true },
-    { id: 'prem', label: 'Premium', fullName: 'Premium Candle', price: 3, img: 'images/premium_candle.jpeg', inStock: true }
+    { id: 'std5', label: 'Standard 5', fullName: 'Standard Candle 5', price: 1, img: 'images/standard_candle5.jpeg', inStock: true }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -57,6 +57,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
+    // 0B. 2D DESIGN & 3D CHARACTER NOTICE TOGGLES
+    // ==========================================
+    const twodCb = document.getElementById('twod_design_cb');
+    const twodNotice = document.getElementById('twod_design_notice');
+    if (twodCb && twodNotice) {
+        twodCb.addEventListener('change', () => {
+            twodNotice.style.display = twodCb.checked ? 'block' : 'none';
+        });
+    }
+
+    const threedCb = document.getElementById('threed_char_cb');
+    const threedNotice = document.getElementById('threed_char_notice');
+    if (threedCb && threedNotice) {
+        threedCb.addEventListener('change', () => {
+            threedNotice.style.display = threedCb.checked ? 'block' : 'none';
+        });
+    }
+
+    // ==========================================
     // 1. BUILD CANDLE GALLERY & CHECKLIST
     // ==========================================
     const galleryContainer = document.getElementById('candle-gallery');
@@ -81,30 +100,60 @@ document.addEventListener('DOMContentLoaded', () => {
             if (candle.inStock) {
                 label.innerHTML = `
                     <input type="checkbox" id="${candle.id}_cb" name="candle_types" value="${candle.label}">
-                    ${candle.fullName} (+$${candle.price}/ea)
+                    ${candle.label} (+$${candle.price}/ea)
                 `;
                 checklistContainer.appendChild(label);
 
-                // Create Hidden Quantity Input
+                // Determine specific field label & placeholder based on candle ID
+                let specLabel = 'Specify Color / Style:';
+                let specPlaceholder = 'e.g. Gold, pink, rainbow...';
+
+                if (candle.id === 'prem') {
+                    specLabel = 'Specify Type / Character:';
+                    specPlaceholder = 'e.g. Teddy bear, daisy flower, duck, red heart, spiral...';
+                } else if (candle.id === 'std1' || candle.id === 'std2') {
+                    specLabel = 'Specify Color:';
+                    specPlaceholder = 'e.g. Gold, silver, black, pink...';
+                } else if (candle.id === 'std3' || candle.id === 'std4' || candle.id === 'std5') {
+                    specLabel = 'Specify Type & Color:';
+                    specPlaceholder = 'e.g. Polka dot, spiral, gradient, metallic wave...';
+                }
+
+                // Create Quantity & Specification Inputs Container
                 const qtyWrapper = document.createElement('div');
                 qtyWrapper.id = `${candle.id}_qty`;
                 qtyWrapper.className = 'candle-qty-container';
                 qtyWrapper.style.display = 'none';
                 qtyWrapper.innerHTML = `
-                    <label>Quantity for ${candle.label}:</label>
-                    <input type="number" name="${candle.id}_quantity" min="1" value="1">
+                    <div style="margin-bottom: 8px;">
+                        <label style="font-size: 11px; margin-bottom: 3px; display: block;">Quantity for ${candle.label}:</label>
+                        <input type="number" name="${candle.id}_quantity" min="1" value="1" style="padding: 8px 10px; width: 100%;">
+                    </div>
+                    <div>
+                        <label style="font-size: 11px; margin-bottom: 3px; display: block;">${specLabel}</label>
+                        <input type="text" name="${candle.id}_color" placeholder="${specPlaceholder}" style="padding: 8px 10px; width: 100%;">
+                    </div>
                 `;
                 checklistContainer.appendChild(qtyWrapper);
 
-                // Toggle Quantity Input when Checked
+                // Toggle Quantity & Specification Inputs when Checked
                 const checkbox = label.querySelector('input[type="checkbox"]');
+                const specInput = qtyWrapper.querySelector(`input[name="${candle.id}_color"]`);
+                
                 checkbox.addEventListener('change', () => {
                     qtyWrapper.style.display = checkbox.checked ? 'block' : 'none';
+                    if (checkbox.checked) {
+                        specInput.required = true;
+                        specInput.focus();
+                    } else {
+                        specInput.required = false;
+                        specInput.value = '';
+                    }
                 });
             } else {
                 label.innerHTML = `
                     <input type="checkbox" disabled>
-                    ${candle.fullName} (Out of Stock)
+                    ${candle.label} (Out of Stock)
                 `;
                 checklistContainer.appendChild(label);
             }
@@ -205,7 +254,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. FORM SUBMISSION
     // ==========================================
     form.addEventListener('submit', async (e) => {
-        // Check if the browser's native validation fails (e.g., missing required fields)
         if (!form.checkValidity()) {
             form.reportValidity(); 
             return;
@@ -217,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Submitting Order...';
 
-        // Validate photo count (Max 3)
         const photoInput = document.getElementById('inspo_photos');
         if (photoInput && photoInput.files.length > 3) {
             alert('You can only upload up to 3 reference photos.');
@@ -241,12 +288,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 timeSelect.disabled = true;
                 timeSelect.innerHTML = '<option value="">Please select a valid pickup date first</option>';
                 
-                // Hide all conditional containers (candles + custom add-ons)
+                // Hide all conditional containers
                 document.querySelectorAll('.candle-qty-container').forEach(el => {
                     el.style.display = 'none';
                 });
-                if (customMsgInput) customMsgInput.required = false;
-                if (customAddonInput) customAddonInput.required = false;
             } else {
                 alert('Error: ' + (result.error || 'Please try again.'));
             }

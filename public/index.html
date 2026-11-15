@@ -154,14 +154,35 @@
               <input type="checkbox" name="addons" value="Butterflies (5$)" />
               Butterflies ($5)
             </label>
+
+            <!-- 2D Design Option + Reminder Notice -->
             <label>
-              <input type="checkbox" name="addons" value="2D design (5-10$)" />
+              <input
+                type="checkbox"
+                id="twod_design_cb"
+                name="addons"
+                value="2D design (5-10$)"
+              />
               2D design ($5–$10)
             </label>
+            <p id="twod_design_notice" class="notice addon-reminder-notice">
+              💡 Please describe your 2D design details under "4. Design & Inspiration" below.
+            </p>
+
+            <!-- 3D Character Option + Reminder Notice -->
             <label>
-              <input type="checkbox" name="addons" value="3D character (8-10$)" />
+              <input
+                type="checkbox"
+                id="threed_char_cb"
+                name="addons"
+                value="3D character (8-10$)"
+              />
               3D character ($8–$10)
             </label>
+            <p id="threed_char_notice" class="notice addon-reminder-notice">
+              💡 Please describe your 3D character details under "4. Design & Inspiration" below.
+            </p>
+
             <label>
               <input type="checkbox" name="addons" value="Disco ball (10$ for 3)" />
               Disco ball ($10 for 3)
@@ -177,11 +198,7 @@
               />
               Custom message ($2–$5)
             </label>
-            <div
-              id="custom_msg_container"
-              class="candle-qty-container"
-              style="display: none;"
-            >
+            <div id="custom_msg_container" class="candle-qty-container conditional-box">
               <label for="custom_message_text">
                 Please specify the exact message you would like written on the cake:
               </label>
@@ -203,11 +220,7 @@
               />
               Custom add-ons
             </label>
-            <div
-              id="custom_addon_container"
-              class="candle-qty-container"
-              style="display: none;"
-            >
+            <div id="custom_addon_container" class="candle-qty-container conditional-box">
               <label for="custom_addon_text">
                 Please specify what you’d like to include; we will try our best to accommodate:
               </label>
@@ -224,8 +237,7 @@
           <div class="form-group compact-bottom">
             <label>Candle Add-ons</label>
             <p class="notice">
-              Select a candle type to specify your quantity. Pictures are shown
-              below for reference.
+              Select a candle type to specify your quantity, color, or design style. Reference pictures are shown above.
             </p>
           </div>
 
@@ -254,7 +266,7 @@
             <textarea
               id="design_message_notes"
               name="design_message_notes"
-              placeholder="Describe color theme, piping style, placement, or overall design details..."
+              placeholder="Describe color theme, piping style, 2D design / 3D character details, placement, or overall design details..."
             ></textarea>
           </div>
 
@@ -342,7 +354,7 @@
                 unfortunately delivery is not offered. pick up only<br />
                 location : by joyce station or off grandview highway
               </p>
-              <p style="margin-top: 8px;">
+              <p class="delivery-note">
                 if pickup won’t be possible, an uber package delivery can be arranged 
                 (please note that the uber charged based on the app, may be subject to change)
               </p>

@@ -49,12 +49,12 @@ router.post('/orders', (req, res, next) => {
             cake_size,
             cake_flavour,
             candle_types,
-            std1_quantity,
-            std2_quantity,
-            std3_quantity,
-            std4_quantity,
-            std5_quantity,
-            prem_quantity,
+            prem_quantity, prem_color,
+            std1_quantity, std1_color,
+            std2_quantity, std2_color,
+            std3_quantity, std3_color,
+            std4_quantity, std4_color,
+            std5_quantity, std5_color,
             diet_notes,
             design_message_notes,
             payment_method,
@@ -107,22 +107,25 @@ router.post('/orders', (req, res, next) => {
             formattedAddons = enrichedAddons.join(', ');
         }
 
-        // Map candle labels to their corresponding quantity fields
-        const candleQtyMap = {
-            'Standard 1': std1_quantity,
-            'Standard 2': std2_quantity,
-            'Standard 3': std3_quantity,
-            'Standard 4': std4_quantity,
-            'Standard 5': std5_quantity,
-            'Premium': prem_quantity
+        // Map candle data fields (Quantity + Style/Color) matching inventory labels
+        const candleDataMap = {
+            'Premium Toppers & Shapes': { qty: prem_quantity || 1, color: prem_color || 'Any' },
+            'Standard Set 1': { qty: std1_quantity || 1, color: std1_color || 'Any' },
+            'Standard Set 2': { qty: std2_quantity || 1, color: std2_color || 'Any' },
+            'Standard Set 3': { qty: std3_quantity || 1, color: std3_color || 'Any' },
+            'Standard Set 4': { qty: std4_quantity || 1, color: std4_color || 'Any' },
+            'Standard Set 5': { qty: std5_quantity || 1, color: std5_color || 'Any' }
         };
 
         let formattedCandles = 'None';
         if (candle_types) {
             const selectedTypes = Array.isArray(candle_types) ? candle_types : [candle_types];
             formattedCandles = selectedTypes
-                .map(type => `${type} (x${candleQtyMap[type] || 1})`)
-                .join(', ');
+                .map(type => {
+                    const data = candleDataMap[type] || { qty: 1, color: 'Any' };
+                    return `${type} (Qty: ${data.qty}, Choice: "${data.color}")`;
+                })
+                .join('; ');
         }
 
         // Insert into ORDERS table 
@@ -177,7 +180,6 @@ router.get('/booked-slots', async (req, res) => {
             return res.status(400).json({ error: 'Date query parameter is required' });
         }
 
-        // Check if the whole day has reached the limit
         const [dailyCountResult] = await db.query(
             `SELECT COUNT(*) AS total FROM ORDERS WHERE PICKUP_DATE = ? AND STATUS != 'Cancelled'`,
             [date]
@@ -253,7 +255,6 @@ router.patch('/orders/:id/status', adminAuth, async (req, res) => {
             return res.status(404).json({ error: 'Order not found' });
         }
 
-        // Automatically send quote invoice email if status is updated to 'Quote Sent'
         if (status === 'Quote Sent') {
             if (!total_price || parseFloat(total_price) <= 0) {
                 return res.status(400).json({ error: 'Please enter a valid final price before sending a quote.' });
