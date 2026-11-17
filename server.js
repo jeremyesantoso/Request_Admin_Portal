@@ -5,7 +5,7 @@ const cron = require('node-cron');
 const db = require('./config/db');
 const orderRoutes = require('./routes/orderRoutes');
 const adminAuth = require('./middleware/adminAuth');
-const { sendReminderEmail } = require('./utils/mailer');
+const { sendReminderEmail, sendCancelledEmail } = require('./utils/mailer'); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -36,8 +36,6 @@ app.get('/api/health', async (req, res) => {
         res.status(500).json({ error: 'Database connection failed', details: err.message });
     }
 });
-
-const { sendReminderEmail, sendCancelledEmail } = require('./utils/mailer');
 
 // Runs every day at 12:00 AM (Midnight)
 cron.schedule('0 0 * * *', async () => {
