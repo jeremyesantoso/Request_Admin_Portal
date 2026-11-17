@@ -123,6 +123,7 @@ async function updateOrder(orderId) {
     const finalPrice = priceInput.value;
     const newStatus = statusSelect.value;
 
+    // Disable button immediately to prevent double-clicks/duplicate email triggers
     saveBtn.disabled = true;
     const originalText = saveBtn.textContent;
     saveBtn.textContent = 'Saving...';

@@ -131,6 +131,31 @@ body {
     color: var(--text-muted);
 }
 
+/* Make Add-ons and Candles span full width so they stack vertically */
+.order-grid .field-addons-container,
+.order-grid .field-candles-container {
+    grid-column: 1 / -1;
+}
+
+/* Vertical List Styling matching the form checkboxes */
+.admin-attribute-list {
+    margin: 4px 0 0 0;
+    padding-left: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-attribute-list li {
+    font-size: 13px;
+    color: var(--text-dark);
+    background: var(--brand-pink-light);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px dashed var(--border-pink);
+}
+
 .order-notes-box {
     background: var(--brand-pink-light);
     border-radius: 8px;
@@ -271,18 +296,4 @@ body {
         padding: 10px 22px;
         font-size: 14px;
     }
-}
-
-/* Vertical Attribute List Styling */
-.admin-attribute-list {
-    margin: 4px 0 0 0;
-    padding-left: 16px;
-    list-style-type: disc;
-}
-
-.admin-attribute-list li {
-    font-size: 13px;
-    color: var(--text-dark);
-    margin-bottom: 2px;
-    line-height: 1.3;
 }
