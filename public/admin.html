@@ -3,80 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cakekue • Admin Dashboard</title>
-    <link rel="stylesheet" href="/admin.css">
+    <title>cakekue | Admin Workspace</title>
+    <link rel="stylesheet" href="styles_admin.css">
+    <script src="admin.js" defer></script>
 </head>
 <body>
-    <div class="admin-container">
-        <h1>cakekue &bull; Admin Dashboard</h1>
-        <p class="subtitle">Manage incoming custom cake orders and quotations.</p>
+    <main class="admin-workspace">
+        <header class="admin-header">
+            <div class="admin-title-group">
+                <h1>cakekue admin</h1>
+                <p>Manage incoming custom cake inquiries, review reference imagery, and update quotes.</p>
+            </div>
+            <div>
+                <a href="/" target="_blank" class="live-form-link">🌐 View Live Form</a>
+            </div>
+        </header>
 
-        <!-- Status Filter Tabs -->
-        <div class="status-filters" style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
-            <button class="filter-btn active" data-status="All" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #e34a8a; color: white; border-radius: 20px; cursor: pointer; font-weight: 600;">All</button>
-            <button class="filter-btn" data-status="New Inquiry" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600;">New Inquiry</button>
-            <button class="filter-btn" data-status="Quote Sent" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600;">Quote Sent</button>
-            <button class="filter-btn" data-status="Deposit Confirmed" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600;">Deposit Confirmed</button>
-            <button class="filter-btn" data-status="Completed" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600;">Completed</button>
-            <button class="filter-btn" data-status="Cancelled" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600;">Cancelled</button>
-        </div>
+        <section id="orders-list">
+            <div class="empty-state">Loading incoming inquiries...</div>
+        </section>
+    </main>
 
-        <div id="orders-list">
-            <div class="empty-state">Loading orders...</div>
-        </div>
-    </div>
-
-    <!-- Order Card Template -->
+    <!-- Reusable Order Card Template -->
     <template id="order-card-template">
         <div class="order-card">
             <div class="order-header">
-                <span class="order-title">Order #1 • Customer Name</span>
-                <span class="order-badge">New Inquiry</span>
+                <h3 class="order-title"></h3>
+                <span class="badge order-badge"></span>
+            </div>
+            
+            <div class="order-grid">
+                <div><strong>Email:</strong> <span class="field-email"></span></div>
+                <div><strong>Mobile:</strong> <span class="field-mobile"></span></div>
+                <div><strong>Pickup:</strong> <span class="field-pickup"></span></div>
+                <div><strong>Configuration:</strong> <span class="field-config"></span></div>
+                <div><strong>Flavour:</strong> <span class="field-flavour"></span></div>
+                <div><strong>Payment Choice:</strong> <span class="field-payment"></span></div>
+
+                <div class="field-candles-container">
+                    <strong>Candles:</strong> <span class="field-candles"></span>
+                </div>
+                <div class="field-addons-container">
+                    <strong>Add-ons:</strong> <span class="field-addons"></span>
+                </div>
             </div>
 
-            <div class="order-grid">
-                <div class="order-info">
-                    <p><strong>Email:</strong> <span class="field-email"></span></p>
-                    <p><strong>Mobile:</strong> <span class="field-mobile"></span></p>
-                    <p><strong>Pickup:</strong> <span class="field-pickup"></span></p>
-                    <p><strong>Cake Config:</strong> <span class="field-config"></span></p>
-                    <p><strong>Flavour:</strong> <span class="field-flavour"></span></p>
-                    <p><strong>Payment Method:</strong> <span class="field-payment"></span></p>
-                    <p><strong>Candles:</strong> <span class="field-candles">None</span></p>
-                    <p><strong>Add-ons:</strong> <span class="field-addons">None</span></p>
-                    <p><strong>Design Notes:</strong> <span class="field-design-notes">None</span></p>
-                    <p><strong>Dietary Notes:</strong> <span class="field-diet-notes">None</span></p>
-                </div>
+            <div class="order-notes-box">
+                <div class="note-row"><strong>Design Notes:</strong> <span class="field-design-notes"></span></div>
+                <div><strong>Dietary Restrictions:</strong> <span class="field-diet-notes"></span></div>
+            </div>
 
-                <div class="order-actions">
-                    <div class="photo-preview-container">
-                        <strong>Inspiration Photos:</strong>
-                    </div>
+            <div>
+                <span class="ref-photos-label">Reference Photos:</span>
+                <div class="photo-preview-container"></div>
+            </div>
 
-                    <div class="action-controls">
-                        <div class="input-group">
-                            <label>Total Price ($):</label>
-                            <input type="number" step="0.01" class="price-input" placeholder="0.00">
-                        </div>
-
-                        <div class="input-group">
-                            <label>Status:</label>
-                            <select class="status-select">
-                                <option value="New Inquiry">New Inquiry</option>
-                                <option value="Quote Sent">Quote Sent</option>
-                                <option value="Deposit Confirmed">Deposit Confirmed</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                        </div>
-
-                        <button class="save-btn">Save Changes</button>
-                    </div>
-                </div>
+            <div class="admin-actions">
+                <input type="number" step="0.01" placeholder="Final Price ($)" class="price-input">
+                <select class="status-select">
+                    <option value="New Inquiry">New Inquiry</option>
+                    <option value="Quote Sent">Quote Sent</option>
+                    <option value="Deposit Paid">Deposit Paid</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <button class="btn-primary save-btn">Save Changes</button>
             </div>
         </div>
     </template>
-
-    <script src="/admin.js"></script>
 </body>
 </html>
