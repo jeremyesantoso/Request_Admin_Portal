@@ -19,6 +19,17 @@
             </div>
         </header>
 
+        <!-- Status Filter Tabs Bar -->
+        <div class="status-filters" style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+            <button class="filter-btn active" data-status="All" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #e34a8a; color: white; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">All</button>
+            <button class="filter-btn" data-status="New Inquiry" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">New Inquiry</button>
+            <button class="filter-btn" data-status="Quote Sent" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">Quote Sent</button>
+            <button class="filter-btn" data-status="Deposit Paid" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">Deposit Paid</button>
+            <button class="filter-btn" data-status="In Progress" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">In Progress</button>
+            <button class="filter-btn" data-status="Completed" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">Completed</button>
+            <button class="filter-btn" data-status="Cancelled" style="padding: 8px 14px; border: 1px solid #fec5e5; background: #fff1fa; color: #e34a8a; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 13px;">Cancelled</button>
+        </div>
+
         <section id="orders-list">
             <div class="empty-state">Loading incoming inquiries...</div>
         </section>
@@ -29,7 +40,7 @@
         <div class="order-card">
             <div class="order-header">
                 <h3 class="order-title"></h3>
-                <span class="badge order-badge"></span>
+                <span class="badge order-badge" id=""></span>
             </div>
             
             <div class="order-grid">
@@ -59,8 +70,8 @@
             </div>
 
             <div class="admin-actions">
-                <input type="number" step="0.01" placeholder="Final Price ($)" class="price-input">
-                <select class="status-select">
+                <input type="number" step="0.01" placeholder="Final Price ($)" class="price-input" id="">
+                <select class="status-select" id="">
                     <option value="New Inquiry">New Inquiry</option>
                     <option value="Quote Sent">Quote Sent</option>
                     <option value="Deposit Paid">Deposit Paid</option>
@@ -68,7 +79,7 @@
                     <option value="Completed">Completed</option>
                     <option value="Cancelled">Cancelled</option>
                 </select>
-                <button class="btn-primary save-btn">Save Changes</button>
+                <button class="btn-primary save-btn" id="">Save Changes</button>
             </div>
         </div>
     </template>

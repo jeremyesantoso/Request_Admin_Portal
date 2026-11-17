@@ -137,7 +137,7 @@ function renderOrders() {
         statusSelect.id = `status_${order.order_id}`;
         statusSelect.value = order.STATUS;
 
-        // Lock past status options to prevent moving backward
+        // Lock past status options to prevent moving backward and duplicating emails
         lockPastStatusOptions(statusSelect, order.STATUS);
 
         const saveBtn = clone.querySelector('.save-btn');
@@ -152,9 +152,10 @@ function lockPastStatusOptions(selectElement, currentStatus) {
     const statusHierarchy = {
         'New Inquiry': 1,
         'Quote Sent': 2,
-        'Deposit Confirmed': 3,
-        'Completed': 4,
-        'Cancelled': 5
+        'Deposit Paid': 3,
+        'In Progress': 4,
+        'Completed': 5,
+        'Cancelled': 6
     };
 
     const currentRank = statusHierarchy[currentStatus] || 1;
