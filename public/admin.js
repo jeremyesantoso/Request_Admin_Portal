@@ -137,7 +137,7 @@ function renderOrders() {
         statusSelect.id = `status_${order.order_id}`;
         statusSelect.value = order.STATUS;
 
-        // Lock past status options to prevent moving backward and duplicating emails
+        // Lock all past workflow statuses so they can never be re-selected
         lockPastStatusOptions(statusSelect, order.STATUS);
 
         const saveBtn = clone.querySelector('.save-btn');
@@ -162,9 +162,12 @@ function lockPastStatusOptions(selectElement, currentStatus) {
 
     Array.from(selectElement.options).forEach(option => {
         const optionRank = statusHierarchy[option.value];
-        if (optionRank && optionRank < currentRank) {
+        
+        // Disable any status stage that is strictly behind the current progress rank,
+        // and also disable the exact current status to prevent redundant "saving" back to the same state.
+        if (optionRank && optionRank <= currentRank) {
             option.disabled = true;
-            option.style.color = '#ccc';
+            option.style.color = '#bbb';
         }
     });
 }
