@@ -1,4 +1,4 @@
-let allOrders = []; // Store orders globally for client-side filtering
+let allOrders = []; // Store orders globally for instant client-side filtering
 let currentFilter = 'All';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -137,7 +137,7 @@ function renderOrders() {
         statusSelect.id = `status_${order.order_id}`;
         statusSelect.value = order.STATUS;
 
-        // Lock past status options to prevent moving backward
+        // Lock past status options to prevent moving backward and duplicating emails
         lockPastStatusOptions(statusSelect, order.STATUS);
 
         const saveBtn = clone.querySelector('.save-btn');
@@ -148,6 +148,7 @@ function renderOrders() {
     });
 }
 
+// Helper function to disable previous status options in the dropdown
 function lockPastStatusOptions(selectElement, currentStatus) {
     const statusHierarchy = {
         'New Inquiry': 1,
@@ -163,7 +164,7 @@ function lockPastStatusOptions(selectElement, currentStatus) {
         const optionRank = statusHierarchy[option.value];
         if (optionRank && optionRank < currentRank) {
             option.disabled = true;
-            option.style.color = '#ccc';
+            option.style.color = '#ccc'; // Visual cue for locked options
         }
     });
 }
@@ -176,6 +177,7 @@ async function updateOrder(orderId) {
     const finalPrice = priceInput.value;
     const newStatus = statusSelect.value;
 
+    // Prevent double-clicks
     saveBtn.disabled = true;
     const originalText = saveBtn.textContent;
     saveBtn.textContent = 'Saving...';
@@ -198,6 +200,7 @@ async function updateOrder(orderId) {
                 targetOrder.TOTAL_PRICE = finalPrice;
             }
 
+            // Re-render list according to active filter tab
             renderOrders();
         } else {
             alert('Error updating order: ' + (result.error || 'Please try again.'));
