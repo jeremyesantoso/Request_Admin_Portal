@@ -5,7 +5,12 @@ const db = require('../config/db');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const adminAuth = require('../middleware/adminAuth');
-const { sendQuoteEmail } = require('../utils/mailer');
+const { 
+    sendQuoteEmail, 
+    sendDepositEmail, 
+    sendCompletedEmail, 
+    sendCancelledEmail 
+} = require('../utils/mailer');
 
 // Configure Cloudinary with credentials from .env
 cloudinary.config({
@@ -240,7 +245,7 @@ router.get('/orders', adminAuth, async (req, res) => {
     }
 });
 
-// PATCH /api/orders/:id/status - Update order price quote, status, and trigger quote email
+// PATCH /api/orders/:id/status - Update order price quote, status, and trigger corresponding status emails
 router.patch('/orders/:id/status', adminAuth, async (req, res) => {
     try {
         const { id } = req.params;
@@ -255,36 +260,78 @@ router.patch('/orders/:id/status', adminAuth, async (req, res) => {
             return res.status(404).json({ error: 'Order not found' });
         }
 
-        if (status === 'Quote Sent') {
-            if (!total_price || parseFloat(total_price) <= 0) {
-                return res.status(400).json({ error: 'Please enter a valid final price before sending a quote.' });
-            }
+        // Fetch basic order details for emailing
+        const [rows] = await db.query(
+            `SELECT 
+                o.ID AS order_id, o.CUSTOMER_NAME, o.CUSTOMER_EMAIL, 
+                o.PICKUP_DATE, o.PICKUP_TIME, o.TOTAL_PRICE,
+                cs.CAKE_SHAPE, cs.CAKE_SIZE, cs.CAKE_FLAVOUR, 
+                cs.CANDLE_OPTION, cs.DIET_NOTES, cs.DESIGN_MESSAGE_NOTES, cs.ADDONS
+             FROM ORDERS o
+             LEFT JOIN CAKE_SPECS cs ON o.ID = cs.ORDER_ID
+             WHERE o.ID = ?`,
+            [id]
+        );
 
-            const [rows] = await db.query(
-                `SELECT 
-                    o.ID AS order_id, o.CUSTOMER_NAME, o.CUSTOMER_EMAIL, 
-                    o.PICKUP_DATE, o.PICKUP_TIME, o.TOTAL_PRICE,
-                    cs.CAKE_SHAPE, cs.CAKE_SIZE, cs.CAKE_FLAVOUR, 
-                    cs.CANDLE_OPTION, cs.DIET_NOTES, cs.DESIGN_MESSAGE_NOTES, cs.ADDONS
-                 FROM ORDERS o
-                 LEFT JOIN CAKE_SPECS cs ON o.ID = cs.ORDER_ID
-                 WHERE o.ID = ?`,
-                [id]
-            );
+        let emailMessage = 'Order updated successfully!';
 
-            if (rows.length > 0) {
-                await sendQuoteEmail(rows[0]);
+        if (rows.length > 0) {
+            const order = rows[0];
+
+            if (status === 'Quote Sent') {
+                if (!total_price || parseFloat(total_price) <= 0) {
+                    return res.status(400).json({ error: 'Please enter a valid final price before sending a quote.' });
+                }
+                await sendQuoteEmail(order);
+                emailMessage = 'Order updated and quote invoice emailed to customer!';
+            } 
+            else if (status === 'Deposit Paid') {
+                await sendDepositEmail(order);
+                emailMessage = 'Order updated and deposit confirmation emailed to customer!';
+            } 
+            else if (status === 'Completed') {
+                await sendCompletedEmail(order);
+                emailMessage = 'Order updated and thank-you email sent to customer!';
+            } 
+            else if (status === 'Cancelled') {
+                await sendCancelledEmail(order);
+                emailMessage = 'Order updated and cancellation notice emailed to customer!';
             }
         }
 
-        res.json({ 
-            message: status === 'Quote Sent' 
-                ? 'Order updated and quote invoice emailed to customer!' 
-                : 'Order updated successfully!' 
-        });
+        res.json({ message: emailMessage });
     } catch (error) {
-        console.error('Error updating order:', error);
-        res.status(500).json({ error: 'Failed to update order status or send email' });
+        console.error('Error updating order status:', error);
+        res.status(500).json({ error: 'Failed to update order status or send email', details: error.message });
+    }
+});
+
+// GET /api/orders/:id/reset - Reactivate/Reset an expired or cancelled inquiry
+router.get('/orders/:id/reset', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Reset the status back to 'New Inquiry' so your sister can re-quote it
+        const [result] = await db.query(
+            `UPDATE ORDERS SET STATUS = 'New Inquiry' WHERE ID = ?`,
+            [id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).send('<h3>Order not found or invalid link.</h3>');
+        }
+
+        // Render a clean success page for the customer
+        res.send(`
+            <div style="font-family: Arial, sans-serif; text-align: center; padding: 50px; background-color: #fff1fa; color: #333; height: 100vh;">
+                <h2 style="color: #e34a8a;">✨ Inquiry Reactivated Successfully!</h2>
+                <p style="font-size: 16px;">Thank you! Your request for Order #${id} has been sent back to our active queue.</p>
+                <p style="font-size: 14px; color: #666;">Our team will review it and get back to you with an updated quote soon.</p>
+            </div>
+        `);
+    } catch (error) {
+        console.error('Error resetting order:', error);
+        res.status(500).send('<h3>Server error while resetting your inquiry. Please try again later.</h3>');
     }
 });
 

@@ -1,0 +1,36 @@
+<div style="font-family: 'Nunito', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #fec5e5; border-radius: 16px; padding: 32px; color: #333333; box-shadow: 0 4px 15px rgba(238, 130, 238, 0.08);">
+    
+    <!-- Brand Logo & Header -->
+    <div style="text-align: center; margin-bottom: 24px;">
+        <img src="https://res.cloudinary.com/mvaju6bh/image/upload/v1794906216/cakekue_logo.jpg" alt="cakekue logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #fec5e5; margin-bottom: 12px;">
+        <h2 style="color: #e34a8a; font-size: 24px; margin: 0; letter-spacing: 0.5px;">cakekue &bull; Order Notice</h2>
+    </div>
+
+    <p style="font-size: 15px; color: #555555;">Hi <strong>{{customer_name}}</strong>,</p>
+    <p style="font-size: 15px; color: #555555; line-height: 1.5;">
+        Hi, your custom cake invoice for <strong>{{formatted_date}}, {{pickup_time}}</strong> (Order #{{order_id}}) is no longer valid.
+    </p>
+    
+    <!-- Two Action Options Box -->
+    <div style="margin: 24px 0; background: #fff1fa; border: 1px dashed #fec5e5; border-radius: 14px; padding: 20px; text-align: center;">
+        <p style="margin: 0 0 16px 0; font-size: 14px; color: #555555; line-height: 1.5;">
+            Would you still like to proceed with your cake? Choose an option below:
+        </p>
+
+        <!-- Option 1: Reset / Reactivate Expired Inquiry -->
+        <a href="/api/orders/{{order_id}}/reset" target="_blank" style="display: block; background-color: #ffffff; color: #e34a8a; border: 1px solid #e34a8a; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(227, 74, 138, 0.1);">
+            🔄 Reset / Reactivate Expired Inquiry
+        </a>
+
+        <!-- Option 2: Submit New Inquiry -->
+        <a href="/inquiry" target="_blank" style="display: block; background-color: #e34a8a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(227, 74, 138, 0.2);">
+            📝 Submit an Entirely New Inquiry Form
+        </a>
+    </div>
+
+    <!-- Footer Banner -->
+    <p style="font-size: 13px; color: #e34a8a; margin-top: 28px; line-height: 1.5; text-align: center; background: #fff1fa; padding: 14px; border-radius: 10px; border: 1px solid #fec5e5;">
+        Thank you for considering cakekue!<br>
+        <strong style="font-size: 14px;">Have a wonderful day! 🙂</strong>
+    </p>
+</div>

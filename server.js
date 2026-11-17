@@ -1,9 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const cron = require('node-cron');
 const db = require('./config/db');
 const orderRoutes = require('./routes/orderRoutes');
 const adminAuth = require('./middleware/adminAuth');
+const { sendReminderEmail } = require('./utils/mailer');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +34,47 @@ app.get('/api/health', async (req, res) => {
     } catch (err) {
         console.error('Database connection error:', err);
         res.status(500).json({ error: 'Database connection failed', details: err.message });
+    }
+});
+
+const { sendReminderEmail, sendCancelledEmail } = require('./utils/mailer');
+
+// Runs every day at 12:00 AM (Midnight)
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const today = new Date().toISOString().split('T')[0];
+
+        // 1. Send Pickup Reminders for orders due today with 'Deposit Paid' status
+        const [ordersDueToday] = await db.query(
+            `SELECT o.ID AS order_id, o.CUSTOMER_NAME, o.CUSTOMER_EMAIL, o.PICKUP_TIME 
+             FROM ORDERS o 
+             WHERE o.PICKUP_DATE = ? AND o.STATUS = 'Deposit Paid'`,
+            [today]
+        );
+
+        for (const order of ordersDueToday) {
+            await sendReminderEmail(order);
+            console.log(`Automated pickup reminder sent for Order #${order.order_id}`);
+        }
+
+        // 2. Automatically Expire/Cancel 'Quote Sent' orders that are older than 24 hours
+        const [expiredQuotes] = await db.query(
+            `SELECT o.ID AS order_id, o.CUSTOMER_NAME, o.CUSTOMER_EMAIL, o.PICKUP_DATE, o.PICKUP_TIME 
+             FROM ORDERS o 
+             WHERE o.STATUS = 'Quote Sent' AND o.CREATED_AT <= NOW() - INTERVAL 24 HOUR`
+        );
+
+        for (const order of expiredQuotes) {
+            // Update status to Cancelled in the database
+            await db.query(`UPDATE ORDERS SET STATUS = 'Cancelled' WHERE ID = ?`, [order.order_id]);
+            
+            // Dispatch the cancellation/expired notice email with reset options
+            await sendCancelledEmail(order);
+            console.log(`Expired quote automatically cancelled and notified for Order #${order.order_id}`);
+        }
+
+    } catch (error) {
+        console.error('Error running midnight background cron tasks:', error);
     }
 });
 

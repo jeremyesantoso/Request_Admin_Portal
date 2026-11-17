@@ -1,0 +1,45 @@
+<div style="font-family: 'Nunito', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #fec5e5; border-radius: 16px; padding: 32px; color: #333333; box-shadow: 0 4px 15px rgba(238, 130, 238, 0.08);">
+    
+    <!-- Brand Logo & Header -->
+    <div style="text-align: center; margin-bottom: 24px;">
+        <img src="https://res.cloudinary.com/mvaju6bh/image/upload/v1794906216/cakekue_logo.jpg" alt="cakekue logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid #fec5e5; margin-bottom: 12px;">
+        <h2 style="color: #e34a8a; font-size: 24px; margin: 0; letter-spacing: 0.5px;">cakekue &bull; Order Confirmed!</h2>
+    </div>
+
+    <p style="font-size: 15px; color: #555555;">Hi <strong>{{customer_name}}</strong>,</p>
+    <p style="font-size: 15px; color: #555555; line-height: 1.5;">I just received your deposit! Your order is confirmed for this <strong>{{formatted_date}} at {{pickup_time}}</strong> ✨</p>
+    
+    <!-- Confirmation & Pickup Box -->
+    <div style="background: #fff1fa; border: 1px dashed #fec5e5; border-radius: 12px; padding: 20px; margin: 24px 0;">
+        <p style="margin: 8px 0; font-size: 14px;"><strong>Order ID:</strong> #{{order_id}}</p>
+        <p style="margin: 8px 0; font-size: 14px;"><strong>Confirmed Pickup:</strong> {{formatted_date}} at {{pickup_time}}</p>
+        
+        <!-- Location Card Box with Visual Map Preview -->
+        <div style="margin-top: 14px; background: #ffffff; border: 1px solid #fec5e5; border-radius: 10px; overflow: hidden;">
+            
+            <!-- Clickable Map Image Banner -->
+            <a href="https://www.google.com/maps/search/?api=1&query=4850+Boundary+Rd+Burnaby+BC" target="_blank" style="display: block;">
+                <img src="https://res.cloudinary.com/mvaju6bh/image/upload/v1794908999/Screenshot_2026-11-17_024904.png" alt="Pickup Map Preview" style="width: 100%; height: 140px; object-fit: cover; display: block; border-bottom: 1px solid #fec5e5;">
+            </a>
+
+            <div style="background-color: #fce4f2; padding: 10px 14px; border-bottom: 1px dashed #fec5e5; font-size: 13px; font-weight: 700; color: #e34a8a; text-transform: uppercase; letter-spacing: 0.5px;">
+                📍 Pickup Location
+            </div>
+            <div style="padding: 14px;">
+                <p style="margin: 0 0 4px 0; font-size: 15px; color: #333333;"><strong>4850 Boundary Road</strong></p>
+                <p style="margin: 0 0 12px 0; font-size: 13px; color: #666666;">It's by Joyce Station or off Grandview Highway 😁</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=4850+Boundary+Rd+Burnaby+BC" target="_blank" style="display: block; text-align: center; background-color: #e34a8a; color: #ffffff; padding: 10px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 0 2px 8px rgba(227, 74, 138, 0.2);">
+                    Open in Google Maps 🗺️
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <p style="font-size: 15px; color: #555555; line-height: 1.5;">Thank you for trusting CakeKue for your special occasion!</p>
+
+    <!-- Footer Banner -->
+    <p style="font-size: 13px; color: #e34a8a; margin-top: 28px; line-height: 1.5; text-align: center; background: #fff1fa; padding: 14px; border-radius: 10px; border: 1px solid #fec5e5;">
+        We are excited to bake something special for you!<br>
+        <strong style="font-size: 14px;">See you soon! 🙂</strong>
+    </p>
+</div>
