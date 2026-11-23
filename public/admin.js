@@ -1,8 +1,54 @@
 let allOrders = []; // Store orders globally for client-side filtering
 let currentFilter = 'All';
+let searchQuery = '';
+
+const SEEN_STORAGE_KEY = 'cakekue_seen_order_states_v1';
+
+function getSeenMap() {
+    try {
+        return JSON.parse(localStorage.getItem(SEEN_STORAGE_KEY)) || {};
+    } catch {
+        return {};
+    }
+}
+
+function saveSeenMap(map) {
+    try {
+        localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify(map));
+    } catch (err) {
+        console.warn('Could not persist seen order states:', err);
+    }
+}
+
+function getOrderStateSignature(order) {
+    const price = order.TOTAL_PRICE !== null && order.TOTAL_PRICE !== undefined
+        ? String(order.TOTAL_PRICE)
+        : '';
+    return `${order.STATUS || 'New Inquiry'}|${price}`;
+}
+
+function isOrderSeen(order) {
+    const seenMap = getSeenMap();
+    return seenMap[String(order.order_id)] === getOrderStateSignature(order);
+}
+
+function markOrderAsSeen(order) {
+    if (!order) return;
+    const seenMap = getSeenMap();
+    seenMap[String(order.order_id)] = getOrderStateSignature(order);
+    saveSeenMap(seenMap);
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
     const container = document.getElementById('orders-list');
+    const searchInput = document.getElementById('customer-search');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.trim().toLowerCase();
+            renderOrders();
+        });
+    }
 
     try {
         const res = await fetch('/api/orders');
@@ -33,17 +79,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+function applyCardSeenVisuals(cardEl, unreadPill, seen) {
+    if (seen) {
+        cardEl.classList.remove('is-unread');
+        cardEl.classList.add('is-seen');
+        if (unreadPill) unreadPill.style.display = 'none';
+    } else {
+        cardEl.classList.remove('is-seen');
+        cardEl.classList.add('is-unread');
+        if (unreadPill) unreadPill.style.display = 'inline-block';
+    }
+}
+
 function renderOrders() {
     const container = document.getElementById('orders-list');
     const template = document.getElementById('order-card-template');
 
-    // Filter orders based on active tab selection
-    const filteredOrders = currentFilter === 'All' 
-        ? allOrders 
-        : allOrders.filter(order => order.STATUS === currentFilter);
+    // Filter orders based on active status tab and search query
+    const filteredOrders = allOrders.filter(order => {
+        const matchesStatus = currentFilter === 'All' || order.STATUS === currentFilter;
+        const nameMatch = (order.CUSTOMER_NAME || '').toLowerCase().includes(searchQuery);
+        const emailMatch = (order.CUSTOMER_EMAIL || '').toLowerCase().includes(searchQuery);
+        const matchesSearch = !searchQuery || nameMatch || emailMatch;
+        return matchesStatus && matchesSearch;
+    });
 
     if (filteredOrders.length === 0) {
-        container.innerHTML = `<div class="empty-state">No orders found with status "${currentFilter}".</div>`;
+        const filterLabel = currentFilter === 'All' ? 'orders' : `orders with status "${currentFilter}"`;
+        const searchLabel = searchQuery ? ` matching "${searchQuery}"` : '';
+        container.innerHTML = `<div class="empty-state">No ${filterLabel}${searchLabel} found.</div>`;
         return;
     }
 
@@ -51,6 +115,19 @@ function renderOrders() {
     
     filteredOrders.forEach(order => {
         const clone = template.content.cloneNode(true);
+        const cardEl = clone.querySelector('.order-card');
+        const unreadPill = clone.querySelector('.unread-pill');
+
+        cardEl.dataset.orderId = order.order_id;
+        applyCardSeenVisuals(cardEl, unreadPill, isOrderSeen(order));
+
+        // Clicking or focusing inside the card marks it as seen and cools down its highlight
+        cardEl.addEventListener('click', () => {
+            if (!isOrderSeen(order)) {
+                markOrderAsSeen(order);
+                applyCardSeenVisuals(cardEl, unreadPill, true);
+            }
+        });
 
         clone.querySelector('.order-title').textContent = `Order #${order.order_id} • ${order.CUSTOMER_NAME}`;
         
@@ -142,7 +219,10 @@ function renderOrders() {
 
         const saveBtn = clone.querySelector('.save-btn');
         saveBtn.id = `saveBtn_${order.order_id}`;
-        saveBtn.addEventListener('click', () => updateOrder(order.order_id));
+        saveBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            updateOrder(order.order_id);
+        });
 
         container.appendChild(clone);
     });
@@ -200,6 +280,7 @@ async function updateOrder(orderId) {
             if (targetOrder) {
                 targetOrder.STATUS = newStatus;
                 targetOrder.TOTAL_PRICE = finalPrice;
+                markOrderAsSeen(targetOrder);
             }
 
             renderOrders();
