@@ -38,7 +38,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Runs every day at 12:00 AM (Midnight)
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('0 0 * * *', async () => {//Testing to run alltime
     try {
         const today = new Date().toISOString().split('T')[0];
 

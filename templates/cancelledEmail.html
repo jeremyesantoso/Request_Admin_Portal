@@ -17,14 +17,18 @@
             Would you still like to proceed with your cake? Choose an option below:
         </p>
 
-        <!-- Option 1: Reset / Reactivate Expired Inquiry -->
-        <a href="/api/orders/{{order_id}}/reset" target="_blank" style="display: block; background-color: #ffffff; color: #e34a8a; border: 1px solid #e34a8a; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(227, 74, 138, 0.1);">
-            🔄 Reset / Reactivate Expired Inquiry
+        <!-- 1. Reset / Reactivate Button -->
+        <a href="https://request-admin-portal.onrender.com/api/orders/{{order_id}}/reset" target="_blank" style="text-decoration: none; display: block; margin-bottom: 10px;">
+            <div style="background-color: #ffffff; color: #e34a8a; border: 1px solid #e34a8a; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                🔄 Reset / Reactivate Expired Inquiry
+            </div>
         </a>
 
-        <!-- Option 2: Submit New Inquiry -->
-        <a href="/inquiry" target="_blank" style="display: block; background-color: #e34a8a; color: #ffffff; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; box-shadow: 0 4px 10px rgba(227, 74, 138, 0.2);">
-            📝 Submit an Entirely New Inquiry Form
+        <!-- 2. Submit New Inquiry Button -->
+        <a href="https://request-admin-portal.onrender.com/" target="_blank" style="text-decoration: none; display: block;">
+            <div style="background-color: #e34a8a; color: #ffffff; padding: 12px 20px; border-radius: 8px; font-weight: bold; font-size: 14px;">
+                📝 Submit an Entirely New Inquiry Form
+            </div>
         </a>
     </div>
 

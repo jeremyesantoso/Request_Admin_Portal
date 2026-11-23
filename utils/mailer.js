@@ -3,13 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Helper to convert comma or semicolon separated strings into clean vertical HTML list items
-const formatVerticalList = (str) => {
+const formatVerticalList = (str, customSeparator = null) => {
     if (!str || str === 'None' || str.trim() === '') return '<span style="color: #888;">None</span>';
     
-    const separator = str.includes(';') ? ';' : ',';
+    const separator = customSeparator || (str.includes(';') ? ';' : ',');
     const items = str.split(separator).map(item => item.trim()).filter(Boolean);
-    
-    if (items.length <= 1) return str;
 
     return items
         .map(item => `<div style="background: #ffffff; padding: 6px 10px; border-radius: 6px; border: 1px dashed #f8c8dc; margin-top: 4px; font-size: 13px; color: #4a4a4a;">• ${item}</div>`)
@@ -49,7 +47,8 @@ async function sendQuoteEmail(order) {
     const depositAmount = (parseFloat(order.TOTAL_PRICE) / 2).toFixed(2);
     const formattedDate = new Date(order.PICKUP_DATE).toISOString().split('T')[0];
 
-    const formattedCandles = formatVerticalList(order.CANDLE_OPTION);
+    // Pass ';' as custom separator so single-item candles with internal commas don't split apart
+    const formattedCandles = formatVerticalList(order.CANDLE_OPTION, ';');
     const formattedAddons = formatVerticalList(order.ADDONS || 'None');
 
     const templatePath = path.join(__dirname, '../templates/quoteEmail.html');

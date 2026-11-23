@@ -112,14 +112,14 @@ router.post('/orders', (req, res, next) => {
             formattedAddons = enrichedAddons.join(', ');
         }
 
-        // Map candle data fields (Quantity + Style/Color) matching inventory labels
+        // Map candle data fields matching frontend checkbox values and dynamic input names
         const candleDataMap = {
-            'Premium Toppers & Shapes': { qty: prem_quantity || 1, color: prem_color || 'Any' },
-            'Standard Set 1': { qty: std1_quantity || 1, color: std1_color || 'Any' },
-            'Standard Set 2': { qty: std2_quantity || 1, color: std2_color || 'Any' },
-            'Standard Set 3': { qty: std3_quantity || 1, color: std3_color || 'Any' },
-            'Standard Set 4': { qty: std4_quantity || 1, color: std4_color || 'Any' },
-            'Standard Set 5': { qty: std5_quantity || 1, color: std5_color || 'Any' }
+            'Premium': { qty: prem_quantity || 1, color: prem_color || 'Any' },
+            'Standard 1': { qty: std1_quantity || 1, color: std1_color || 'Any' },
+            'Standard 2': { qty: std2_quantity || 1, color: std2_color || 'Any' },
+            'Standard 3': { qty: std3_quantity || 1, color: std3_color || 'Any' },
+            'Standard 4': { qty: std4_quantity || 1, color: std4_color || 'Any' },
+            'Standard 5': { qty: std5_quantity || 1, color: std5_color || 'Any' }
         };
 
         let formattedCandles = 'None';
@@ -128,7 +128,8 @@ router.post('/orders', (req, res, next) => {
             formattedCandles = selectedTypes
                 .map(type => {
                     const data = candleDataMap[type] || { qty: 1, color: 'Any' };
-                    return `${type} (Qty: ${data.qty}, Choice: "${data.color}")`;
+                    const chosenColor = (data.color && data.color.trim() !== '') ? data.color.trim() : 'Any';
+                    return `${type} (Qty: ${data.qty}, Choice: "${chosenColor}")`;
                 })
                 .join('; ');
         }

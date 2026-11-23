@@ -292,6 +292,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.candle-qty-container').forEach(el => {
                     el.style.display = 'none';
                 });
+
+                // Hide 2D and 3D reminder notices
+                if (twodNotice) twodNotice.style.display = 'none';
+                if (threedNotice) threedNotice.style.display = 'none';
             } else {
                 alert('Error: ' + (result.error || 'Please try again.'));
             }
